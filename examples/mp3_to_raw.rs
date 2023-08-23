@@ -9,10 +9,9 @@
 //! and compare to
 //! ```mplayer ffi/Adafruit_MP3/examples/test.mp3```
 
-static MP3: &[u8] = include_bytes!("../ffi/Adafruit_MP3/examples/test.mp3");
-use picomp3lib_rs::ffi::*;
-use picomp3lib_rs::*;
+static MP3: &[u8] = include_bytes!("../vampire_killer_11khz_10s.mp3");
 use byte_slice_cast::AsByteSlice;
+use picomp3lib_rs::Mp3;
 use std::{fs::File, io::Write};
 
 fn main() {
@@ -40,7 +39,7 @@ fn main() {
     let mut buf = [0i16; BUFF_LEN];
 
     let mut file = File::create("audio_raw.bin").unwrap();
-    'decodeloop: while newlen > 0 {
+    while newlen > 0 {
         // println!("{:?}, {}", mp3_slice.as_ptr(), newlen);
         newlen = mp3dec.decode(&mp3_slice, newlen, &mut buf).unwrap();
         mp3_slice = &mp3_slice[mp3_slice.len() - (newlen as usize)..];

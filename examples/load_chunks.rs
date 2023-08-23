@@ -10,10 +10,9 @@
 //! ```mplayer ffi/Adafruit_MP3/examples/test.mp3```
 
 static MP3: &[u8] = include_bytes!("../ffi/Adafruit_MP3/examples/test.mp3");
-use picomp3lib_rs::ffi::*;
-use picomp3lib_rs::*;
 use byte_slice_cast::AsByteSlice;
 use core::slice::Chunks;
+use picomp3lib_rs::*;
 use std::{fmt, fs::File, io::Write};
 
 const BUFF_SZ: usize = 1024;
@@ -38,6 +37,7 @@ impl fmt::Display for Buffer {
     }
 }
 
+#[allow(unused)]
 impl Buffer {
     pub fn new() -> Self {
         Self {
@@ -108,7 +108,7 @@ impl Buffer {
 fn main() {
     println!("Adafruit-mp3 decoding start");
     let mut mp3dec = Mp3::new();
-    let mut mp3_loader = &mut MP3.chunks(CHUNK_SZ);
+    let mp3_loader = &mut MP3.chunks(CHUNK_SZ);
 
     let mut buffer = Buffer::new();
 
@@ -127,7 +127,7 @@ fn main() {
 
     println!("info: {:?}", frame);
 
-    let mut newlen = buffer.available() as i32;
+    let newlen = buffer.available() as i32;
     println!("mp3 len: {:?}", newlen);
     // todo: work out what a sensible buffer length is
     // check decode_len for an idea. decode_len is in bytes
