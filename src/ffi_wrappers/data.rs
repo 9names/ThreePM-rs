@@ -50,7 +50,8 @@ impl Mp3Transparent {
         }
     }
 
-    pub fn double_init(&mut self) {
+    /// Initialise pointers in our MP3 struct
+    pub fn init(&mut self) {
         self.mp3_dec_info.FrameHeaderPS =
             core::ptr::addr_of_mut!(self.ptd_to.frame_header) as *mut c_void;
         self.mp3_dec_info.SideInfoPS =
@@ -67,19 +68,19 @@ impl Mp3Transparent {
             core::ptr::addr_of_mut!(self.ptd_to.subband_info) as *mut c_void;
     }
 
-    // Find the offset of the next sync word in the MP3 stream. Use this to find the next frame
+    /// Find the offset of the next sync word in the MP3 stream. Use this to find the next frame
     pub fn find_sync_word(mp3buf: &[u8]) -> i32 {
         unsafe { crate::ffi::MP3FindSyncWord(mp3buf.as_ptr(), mp3buf.len() as i32) }
     }
 
-    // Get info for the last decoded MP3 frame
+    /// Get info for the most recently decoded MP3 frame
     pub fn get_last_frame_info(&mut self) -> MP3FrameInfo {
         let mut frame = MP3FrameInfo::new();
         unsafe { crate::ffi::MP3GetLastFrameInfo(self.ptr(), &mut frame) };
         frame
     }
 
-    // Get info for the next MP3 frame
+    /// Get info for the next MP3 frame
     pub fn get_next_frame_info(&mut self, mp3buf: &[u8]) -> Result<MP3FrameInfo, DecodeErr> {
         let mut frame = MP3FrameInfo::new();
         let err =
