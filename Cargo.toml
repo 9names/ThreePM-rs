@@ -1,5 +1,5 @@
 [package]
-name = "picomp3lib-sys"
+name = "picomp3lib-rs"
 version = "0.1.0"
 edition = "2021"
 
