@@ -7,6 +7,10 @@
 #[allow(non_snake_case)]
 pub mod ffi;
 
+pub mod ffi_wrappers;
+
+pub use ffi_wrappers::data::Mp3Transparent;
+
 use core::ffi::c_void;
 
 type Mp3ptrT = *const u8;
