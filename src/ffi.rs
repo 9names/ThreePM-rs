@@ -9,6 +9,19 @@ pub const NGRANS_MPEG1: u32 = 2;
 pub const NGRANS_MPEG2: u32 = 1;
 pub const SYNCWORDH: u32 = 255;
 pub const SYNCWORDL: u32 = 224;
+pub const SIBYTES_MPEG1_MONO: u32 = 17;
+pub const SIBYTES_MPEG1_STEREO: u32 = 32;
+pub const SIBYTES_MPEG2_MONO: u32 = 9;
+pub const SIBYTES_MPEG2_STEREO: u32 = 17;
+pub const POW43_FRACBITS_LOW: u32 = 22;
+pub const POW43_FRACBITS_HIGH: u32 = 12;
+pub const DQ_FRACBITS_OUT: u32 = 25;
+pub const IMDCT_SCALE: u32 = 2;
+pub const HUFF_PAIRTABS: u32 = 32;
+pub const BLOCK_SIZE: u32 = 18;
+pub const NBANDS: u32 = 32;
+pub const MAX_REORDER_SAMPS: u32 = 198;
+pub const VBUF_LENGTH: u32 = 1088;
 pub const MPEGVersion_MPEG1: MPEGVersion = 0;
 pub const MPEGVersion_MPEG2: MPEGVersion = 1;
 pub const MPEGVersion_MPEG25: MPEGVersion = 2;
@@ -550,4 +563,1190 @@ extern "C" {
 }
 extern "C" {
     pub static mut xmp3_sfBandTable: [[SFBandTable; 3usize]; 3usize];
+}
+pub const StereoMode_Stereo: StereoMode = 0;
+pub const StereoMode_Joint: StereoMode = 1;
+pub const StereoMode_Dual: StereoMode = 2;
+pub const StereoMode_Mono: StereoMode = 3;
+pub type StereoMode = core::ffi::c_uint;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _BitStreamInfo {
+    pub bytePtr: *const core::ffi::c_uchar,
+    pub iCache: core::ffi::c_uint,
+    pub cachedBits: core::ffi::c_int,
+    pub nBytes: core::ffi::c_int,
+}
+#[test]
+fn bindgen_test_layout__BitStreamInfo() {
+    const UNINIT: ::core::mem::MaybeUninit<_BitStreamInfo> = ::core::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::core::mem::size_of::<_BitStreamInfo>(),
+        24usize,
+        concat!("Size of: ", stringify!(_BitStreamInfo))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<_BitStreamInfo>(),
+        8usize,
+        concat!("Alignment of ", stringify!(_BitStreamInfo))
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).bytePtr) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_BitStreamInfo),
+            "::",
+            stringify!(bytePtr)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).iCache) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_BitStreamInfo),
+            "::",
+            stringify!(iCache)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).cachedBits) as usize - ptr as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_BitStreamInfo),
+            "::",
+            stringify!(cachedBits)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).nBytes) as usize - ptr as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_BitStreamInfo),
+            "::",
+            stringify!(nBytes)
+        )
+    );
+}
+pub type BitStreamInfo = _BitStreamInfo;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _FrameHeader {
+    pub ver: MPEGVersion,
+    pub layer: core::ffi::c_int,
+    pub crc: core::ffi::c_int,
+    pub brIdx: core::ffi::c_int,
+    pub srIdx: core::ffi::c_int,
+    pub paddingBit: core::ffi::c_int,
+    pub privateBit: core::ffi::c_int,
+    pub sMode: StereoMode,
+    pub modeExt: core::ffi::c_int,
+    pub copyFlag: core::ffi::c_int,
+    pub origFlag: core::ffi::c_int,
+    pub emphasis: core::ffi::c_int,
+    pub CRCWord: core::ffi::c_int,
+    pub sfBand: *const SFBandTable,
+}
+#[test]
+fn bindgen_test_layout__FrameHeader() {
+    const UNINIT: ::core::mem::MaybeUninit<_FrameHeader> = ::core::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::core::mem::size_of::<_FrameHeader>(),
+        64usize,
+        concat!("Size of: ", stringify!(_FrameHeader))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<_FrameHeader>(),
+        8usize,
+        concat!("Alignment of ", stringify!(_FrameHeader))
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).ver) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_FrameHeader),
+            "::",
+            stringify!(ver)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).layer) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_FrameHeader),
+            "::",
+            stringify!(layer)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).crc) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_FrameHeader),
+            "::",
+            stringify!(crc)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).brIdx) as usize - ptr as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_FrameHeader),
+            "::",
+            stringify!(brIdx)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).srIdx) as usize - ptr as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_FrameHeader),
+            "::",
+            stringify!(srIdx)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).paddingBit) as usize - ptr as usize },
+        20usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_FrameHeader),
+            "::",
+            stringify!(paddingBit)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).privateBit) as usize - ptr as usize },
+        24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_FrameHeader),
+            "::",
+            stringify!(privateBit)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).sMode) as usize - ptr as usize },
+        28usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_FrameHeader),
+            "::",
+            stringify!(sMode)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).modeExt) as usize - ptr as usize },
+        32usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_FrameHeader),
+            "::",
+            stringify!(modeExt)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).copyFlag) as usize - ptr as usize },
+        36usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_FrameHeader),
+            "::",
+            stringify!(copyFlag)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).origFlag) as usize - ptr as usize },
+        40usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_FrameHeader),
+            "::",
+            stringify!(origFlag)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).emphasis) as usize - ptr as usize },
+        44usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_FrameHeader),
+            "::",
+            stringify!(emphasis)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).CRCWord) as usize - ptr as usize },
+        48usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_FrameHeader),
+            "::",
+            stringify!(CRCWord)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).sfBand) as usize - ptr as usize },
+        56usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_FrameHeader),
+            "::",
+            stringify!(sfBand)
+        )
+    );
+}
+pub type FrameHeader = _FrameHeader;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _SideInfoSub {
+    pub part23Length: core::ffi::c_int,
+    pub nBigvals: core::ffi::c_int,
+    pub globalGain: core::ffi::c_int,
+    pub sfCompress: core::ffi::c_int,
+    pub winSwitchFlag: core::ffi::c_int,
+    pub blockType: core::ffi::c_int,
+    pub mixedBlock: core::ffi::c_int,
+    pub tableSelect: [core::ffi::c_int; 3usize],
+    pub subBlockGain: [core::ffi::c_int; 3usize],
+    pub region0Count: core::ffi::c_int,
+    pub region1Count: core::ffi::c_int,
+    pub preFlag: core::ffi::c_int,
+    pub sfactScale: core::ffi::c_int,
+    pub count1TableSelect: core::ffi::c_int,
+}
+#[test]
+fn bindgen_test_layout__SideInfoSub() {
+    const UNINIT: ::core::mem::MaybeUninit<_SideInfoSub> = ::core::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::core::mem::size_of::<_SideInfoSub>(),
+        72usize,
+        concat!("Size of: ", stringify!(_SideInfoSub))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<_SideInfoSub>(),
+        4usize,
+        concat!("Alignment of ", stringify!(_SideInfoSub))
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).part23Length) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfoSub),
+            "::",
+            stringify!(part23Length)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).nBigvals) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfoSub),
+            "::",
+            stringify!(nBigvals)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).globalGain) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfoSub),
+            "::",
+            stringify!(globalGain)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).sfCompress) as usize - ptr as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfoSub),
+            "::",
+            stringify!(sfCompress)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).winSwitchFlag) as usize - ptr as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfoSub),
+            "::",
+            stringify!(winSwitchFlag)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).blockType) as usize - ptr as usize },
+        20usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfoSub),
+            "::",
+            stringify!(blockType)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).mixedBlock) as usize - ptr as usize },
+        24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfoSub),
+            "::",
+            stringify!(mixedBlock)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).tableSelect) as usize - ptr as usize },
+        28usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfoSub),
+            "::",
+            stringify!(tableSelect)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).subBlockGain) as usize - ptr as usize },
+        40usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfoSub),
+            "::",
+            stringify!(subBlockGain)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).region0Count) as usize - ptr as usize },
+        52usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfoSub),
+            "::",
+            stringify!(region0Count)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).region1Count) as usize - ptr as usize },
+        56usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfoSub),
+            "::",
+            stringify!(region1Count)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).preFlag) as usize - ptr as usize },
+        60usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfoSub),
+            "::",
+            stringify!(preFlag)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).sfactScale) as usize - ptr as usize },
+        64usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfoSub),
+            "::",
+            stringify!(sfactScale)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).count1TableSelect) as usize - ptr as usize },
+        68usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfoSub),
+            "::",
+            stringify!(count1TableSelect)
+        )
+    );
+}
+pub type SideInfoSub = _SideInfoSub;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _SideInfo {
+    pub mainDataBegin: core::ffi::c_int,
+    pub privateBits: core::ffi::c_int,
+    pub scfsi: [[core::ffi::c_int; 4usize]; 2usize],
+    pub sis: [[SideInfoSub; 2usize]; 2usize],
+}
+#[test]
+fn bindgen_test_layout__SideInfo() {
+    const UNINIT: ::core::mem::MaybeUninit<_SideInfo> = ::core::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::core::mem::size_of::<_SideInfo>(),
+        328usize,
+        concat!("Size of: ", stringify!(_SideInfo))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<_SideInfo>(),
+        4usize,
+        concat!("Alignment of ", stringify!(_SideInfo))
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).mainDataBegin) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfo),
+            "::",
+            stringify!(mainDataBegin)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).privateBits) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfo),
+            "::",
+            stringify!(privateBits)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).scfsi) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfo),
+            "::",
+            stringify!(scfsi)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).sis) as usize - ptr as usize },
+        40usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SideInfo),
+            "::",
+            stringify!(sis)
+        )
+    );
+}
+pub type SideInfo = _SideInfo;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct CriticalBandInfo {
+    pub cbType: core::ffi::c_int,
+    pub cbEndS: [core::ffi::c_int; 3usize],
+    pub cbEndSMax: core::ffi::c_int,
+    pub cbEndL: core::ffi::c_int,
+}
+#[test]
+fn bindgen_test_layout_CriticalBandInfo() {
+    const UNINIT: ::core::mem::MaybeUninit<CriticalBandInfo> = ::core::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::core::mem::size_of::<CriticalBandInfo>(),
+        24usize,
+        concat!("Size of: ", stringify!(CriticalBandInfo))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<CriticalBandInfo>(),
+        4usize,
+        concat!("Alignment of ", stringify!(CriticalBandInfo))
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).cbType) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(CriticalBandInfo),
+            "::",
+            stringify!(cbType)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).cbEndS) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(CriticalBandInfo),
+            "::",
+            stringify!(cbEndS)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).cbEndSMax) as usize - ptr as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(CriticalBandInfo),
+            "::",
+            stringify!(cbEndSMax)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).cbEndL) as usize - ptr as usize },
+        20usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(CriticalBandInfo),
+            "::",
+            stringify!(cbEndL)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _DequantInfo {
+    pub workBuf: [core::ffi::c_int; 198usize],
+    pub cbi: [CriticalBandInfo; 2usize],
+}
+#[test]
+fn bindgen_test_layout__DequantInfo() {
+    const UNINIT: ::core::mem::MaybeUninit<_DequantInfo> = ::core::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::core::mem::size_of::<_DequantInfo>(),
+        840usize,
+        concat!("Size of: ", stringify!(_DequantInfo))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<_DequantInfo>(),
+        4usize,
+        concat!("Alignment of ", stringify!(_DequantInfo))
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).workBuf) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_DequantInfo),
+            "::",
+            stringify!(workBuf)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).cbi) as usize - ptr as usize },
+        792usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_DequantInfo),
+            "::",
+            stringify!(cbi)
+        )
+    );
+}
+pub type DequantInfo = _DequantInfo;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _HuffmanInfo {
+    pub huffDecBuf: [[core::ffi::c_int; 576usize]; 2usize],
+    pub nonZeroBound: [core::ffi::c_int; 2usize],
+    pub gb: [core::ffi::c_int; 2usize],
+}
+#[test]
+fn bindgen_test_layout__HuffmanInfo() {
+    const UNINIT: ::core::mem::MaybeUninit<_HuffmanInfo> = ::core::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::core::mem::size_of::<_HuffmanInfo>(),
+        4624usize,
+        concat!("Size of: ", stringify!(_HuffmanInfo))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<_HuffmanInfo>(),
+        4usize,
+        concat!("Alignment of ", stringify!(_HuffmanInfo))
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).huffDecBuf) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_HuffmanInfo),
+            "::",
+            stringify!(huffDecBuf)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).nonZeroBound) as usize - ptr as usize },
+        4608usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_HuffmanInfo),
+            "::",
+            stringify!(nonZeroBound)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).gb) as usize - ptr as usize },
+        4616usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_HuffmanInfo),
+            "::",
+            stringify!(gb)
+        )
+    );
+}
+pub type HuffmanInfo = _HuffmanInfo;
+pub const _HuffTabType_noBits: _HuffTabType = 0;
+pub const _HuffTabType_oneShot: _HuffTabType = 1;
+pub const _HuffTabType_loopNoLinbits: _HuffTabType = 2;
+pub const _HuffTabType_loopLinbits: _HuffTabType = 3;
+pub const _HuffTabType_quadA: _HuffTabType = 4;
+pub const _HuffTabType_quadB: _HuffTabType = 5;
+pub const _HuffTabType_invalidTab: _HuffTabType = 6;
+pub type _HuffTabType = core::ffi::c_uint;
+pub use self::_HuffTabType as HuffTabType;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _HuffTabLookup {
+    pub linBits: core::ffi::c_int,
+    pub tabType: HuffTabType,
+}
+#[test]
+fn bindgen_test_layout__HuffTabLookup() {
+    const UNINIT: ::core::mem::MaybeUninit<_HuffTabLookup> = ::core::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::core::mem::size_of::<_HuffTabLookup>(),
+        8usize,
+        concat!("Size of: ", stringify!(_HuffTabLookup))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<_HuffTabLookup>(),
+        4usize,
+        concat!("Alignment of ", stringify!(_HuffTabLookup))
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).linBits) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_HuffTabLookup),
+            "::",
+            stringify!(linBits)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).tabType) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_HuffTabLookup),
+            "::",
+            stringify!(tabType)
+        )
+    );
+}
+pub type HuffTabLookup = _HuffTabLookup;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _IMDCTInfo {
+    pub outBuf: [[[core::ffi::c_int; 32usize]; 18usize]; 2usize],
+    pub overBuf: [[core::ffi::c_int; 288usize]; 2usize],
+    pub numPrevIMDCT: [core::ffi::c_int; 2usize],
+    pub prevType: [core::ffi::c_int; 2usize],
+    pub prevWinSwitch: [core::ffi::c_int; 2usize],
+    pub gb: [core::ffi::c_int; 2usize],
+}
+#[test]
+fn bindgen_test_layout__IMDCTInfo() {
+    const UNINIT: ::core::mem::MaybeUninit<_IMDCTInfo> = ::core::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::core::mem::size_of::<_IMDCTInfo>(),
+        6944usize,
+        concat!("Size of: ", stringify!(_IMDCTInfo))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<_IMDCTInfo>(),
+        4usize,
+        concat!("Alignment of ", stringify!(_IMDCTInfo))
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).outBuf) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_IMDCTInfo),
+            "::",
+            stringify!(outBuf)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).overBuf) as usize - ptr as usize },
+        4608usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_IMDCTInfo),
+            "::",
+            stringify!(overBuf)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).numPrevIMDCT) as usize - ptr as usize },
+        6912usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_IMDCTInfo),
+            "::",
+            stringify!(numPrevIMDCT)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).prevType) as usize - ptr as usize },
+        6920usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_IMDCTInfo),
+            "::",
+            stringify!(prevType)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).prevWinSwitch) as usize - ptr as usize },
+        6928usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_IMDCTInfo),
+            "::",
+            stringify!(prevWinSwitch)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).gb) as usize - ptr as usize },
+        6936usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_IMDCTInfo),
+            "::",
+            stringify!(gb)
+        )
+    );
+}
+pub type IMDCTInfo = _IMDCTInfo;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _BlockCount {
+    pub nBlocksLong: core::ffi::c_int,
+    pub nBlocksTotal: core::ffi::c_int,
+    pub nBlocksPrev: core::ffi::c_int,
+    pub prevType: core::ffi::c_int,
+    pub prevWinSwitch: core::ffi::c_int,
+    pub currWinSwitch: core::ffi::c_int,
+    pub gbIn: core::ffi::c_int,
+    pub gbOut: core::ffi::c_int,
+}
+#[test]
+fn bindgen_test_layout__BlockCount() {
+    const UNINIT: ::core::mem::MaybeUninit<_BlockCount> = ::core::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::core::mem::size_of::<_BlockCount>(),
+        32usize,
+        concat!("Size of: ", stringify!(_BlockCount))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<_BlockCount>(),
+        4usize,
+        concat!("Alignment of ", stringify!(_BlockCount))
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).nBlocksLong) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_BlockCount),
+            "::",
+            stringify!(nBlocksLong)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).nBlocksTotal) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_BlockCount),
+            "::",
+            stringify!(nBlocksTotal)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).nBlocksPrev) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_BlockCount),
+            "::",
+            stringify!(nBlocksPrev)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).prevType) as usize - ptr as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_BlockCount),
+            "::",
+            stringify!(prevType)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).prevWinSwitch) as usize - ptr as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_BlockCount),
+            "::",
+            stringify!(prevWinSwitch)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).currWinSwitch) as usize - ptr as usize },
+        20usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_BlockCount),
+            "::",
+            stringify!(currWinSwitch)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).gbIn) as usize - ptr as usize },
+        24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_BlockCount),
+            "::",
+            stringify!(gbIn)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).gbOut) as usize - ptr as usize },
+        28usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_BlockCount),
+            "::",
+            stringify!(gbOut)
+        )
+    );
+}
+pub type BlockCount = _BlockCount;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _ScaleFactorInfoSub {
+    pub l: [core::ffi::c_char; 23usize],
+    pub s: [[core::ffi::c_char; 3usize]; 13usize],
+}
+#[test]
+fn bindgen_test_layout__ScaleFactorInfoSub() {
+    const UNINIT: ::core::mem::MaybeUninit<_ScaleFactorInfoSub> =
+        ::core::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::core::mem::size_of::<_ScaleFactorInfoSub>(),
+        62usize,
+        concat!("Size of: ", stringify!(_ScaleFactorInfoSub))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<_ScaleFactorInfoSub>(),
+        1usize,
+        concat!("Alignment of ", stringify!(_ScaleFactorInfoSub))
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).l) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_ScaleFactorInfoSub),
+            "::",
+            stringify!(l)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).s) as usize - ptr as usize },
+        23usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_ScaleFactorInfoSub),
+            "::",
+            stringify!(s)
+        )
+    );
+}
+pub type ScaleFactorInfoSub = _ScaleFactorInfoSub;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _ScaleFactorJS {
+    pub intensityScale: core::ffi::c_int,
+    pub slen: [core::ffi::c_int; 4usize],
+    pub nr: [core::ffi::c_int; 4usize],
+}
+#[test]
+fn bindgen_test_layout__ScaleFactorJS() {
+    const UNINIT: ::core::mem::MaybeUninit<_ScaleFactorJS> = ::core::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::core::mem::size_of::<_ScaleFactorJS>(),
+        36usize,
+        concat!("Size of: ", stringify!(_ScaleFactorJS))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<_ScaleFactorJS>(),
+        4usize,
+        concat!("Alignment of ", stringify!(_ScaleFactorJS))
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).intensityScale) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_ScaleFactorJS),
+            "::",
+            stringify!(intensityScale)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).slen) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_ScaleFactorJS),
+            "::",
+            stringify!(slen)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).nr) as usize - ptr as usize },
+        20usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_ScaleFactorJS),
+            "::",
+            stringify!(nr)
+        )
+    );
+}
+pub type ScaleFactorJS = _ScaleFactorJS;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _ScaleFactorInfo {
+    pub sfis: [[ScaleFactorInfoSub; 2usize]; 2usize],
+    pub sfjs: ScaleFactorJS,
+}
+#[test]
+fn bindgen_test_layout__ScaleFactorInfo() {
+    const UNINIT: ::core::mem::MaybeUninit<_ScaleFactorInfo> = ::core::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::core::mem::size_of::<_ScaleFactorInfo>(),
+        284usize,
+        concat!("Size of: ", stringify!(_ScaleFactorInfo))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<_ScaleFactorInfo>(),
+        4usize,
+        concat!("Alignment of ", stringify!(_ScaleFactorInfo))
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).sfis) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_ScaleFactorInfo),
+            "::",
+            stringify!(sfis)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).sfjs) as usize - ptr as usize },
+        248usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_ScaleFactorInfo),
+            "::",
+            stringify!(sfjs)
+        )
+    );
+}
+pub type ScaleFactorInfo = _ScaleFactorInfo;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _SubbandInfo {
+    pub vbuf: [core::ffi::c_int; 2176usize],
+    pub vindex: core::ffi::c_int,
+}
+#[test]
+fn bindgen_test_layout__SubbandInfo() {
+    const UNINIT: ::core::mem::MaybeUninit<_SubbandInfo> = ::core::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::core::mem::size_of::<_SubbandInfo>(),
+        8708usize,
+        concat!("Size of: ", stringify!(_SubbandInfo))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<_SubbandInfo>(),
+        4usize,
+        concat!("Alignment of ", stringify!(_SubbandInfo))
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).vbuf) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SubbandInfo),
+            "::",
+            stringify!(vbuf)
+        )
+    );
+    assert_eq!(
+        unsafe { ::core::ptr::addr_of!((*ptr).vindex) as usize - ptr as usize },
+        8704usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(_SubbandInfo),
+            "::",
+            stringify!(vindex)
+        )
+    );
+}
+pub type SubbandInfo = _SubbandInfo;
+extern "C" {
+    pub fn xmp3_SetBitstreamPointer(
+        bsi: *mut BitStreamInfo,
+        nBytes: core::ffi::c_int,
+        buf: *const core::ffi::c_uchar,
+    );
+}
+extern "C" {
+    pub fn xmp3_GetBits(bsi: *mut BitStreamInfo, nBits: core::ffi::c_int) -> core::ffi::c_uint;
+}
+extern "C" {
+    pub fn xmp3_CalcBitsUsed(
+        bsi: *mut BitStreamInfo,
+        startBuf: *const core::ffi::c_uchar,
+        startOffset: core::ffi::c_int,
+    ) -> core::ffi::c_int;
+}
+extern "C" {
+    pub fn xmp3_DequantChannel(
+        sampleBuf: *mut core::ffi::c_int,
+        workBuf: *mut core::ffi::c_int,
+        nonZeroBound: *mut core::ffi::c_int,
+        fh: *mut FrameHeader,
+        sis: *mut SideInfoSub,
+        sfis: *mut ScaleFactorInfoSub,
+        cbi: *mut CriticalBandInfo,
+    ) -> core::ffi::c_int;
+}
+extern "C" {
+    pub fn xmp3_MidSideProc(
+        x: *mut [core::ffi::c_int; 576usize],
+        nSamps: core::ffi::c_int,
+        mOut: *mut core::ffi::c_int,
+    );
+}
+extern "C" {
+    pub fn xmp3_IntensityProcMPEG1(
+        x: *mut [core::ffi::c_int; 576usize],
+        nSamps: core::ffi::c_int,
+        fh: *mut FrameHeader,
+        sfis: *mut ScaleFactorInfoSub,
+        cbi: *mut CriticalBandInfo,
+        midSideFlag: core::ffi::c_int,
+        mixFlag: core::ffi::c_int,
+        mOut: *mut core::ffi::c_int,
+    );
+}
+extern "C" {
+    pub fn xmp3_IntensityProcMPEG2(
+        x: *mut [core::ffi::c_int; 576usize],
+        nSamps: core::ffi::c_int,
+        fh: *mut FrameHeader,
+        sfis: *mut ScaleFactorInfoSub,
+        cbi: *mut CriticalBandInfo,
+        sfjs: *mut ScaleFactorJS,
+        midSideFlag: core::ffi::c_int,
+        mixFlag: core::ffi::c_int,
+        mOut: *mut core::ffi::c_int,
+    );
+}
+extern "C" {
+    pub fn xmp3_FDCT32(
+        x: *mut core::ffi::c_int,
+        d: *mut core::ffi::c_int,
+        offset: core::ffi::c_int,
+        oddBlock: core::ffi::c_int,
+        gb: core::ffi::c_int,
+    );
+}
+extern "C" {
+    pub static xmp3_huffTabLookup: [HuffTabLookup; 32usize];
+}
+extern "C" {
+    pub static xmp3_huffTabOffset: [core::ffi::c_int; 32usize];
+}
+extern "C" {
+    pub static xmp3_huffTable: [core::ffi::c_ushort; 0usize];
+}
+extern "C" {
+    pub static xmp3_quadTable: [core::ffi::c_uchar; 80usize];
+}
+extern "C" {
+    pub static xmp3_quadTabOffset: [core::ffi::c_int; 2usize];
+}
+extern "C" {
+    pub static xmp3_quadTabMaxBits: [core::ffi::c_int; 2usize];
+}
+extern "C" {
+    pub fn xmp3_PolyphaseMono(
+        pcm: *mut core::ffi::c_short,
+        vbuf: *mut core::ffi::c_int,
+        coefBase: *const core::ffi::c_int,
+    );
+}
+extern "C" {
+    pub fn xmp3_PolyphaseStereo(
+        pcm: *mut core::ffi::c_short,
+        vbuf: *mut core::ffi::c_int,
+        coefBase: *const core::ffi::c_int,
+    );
+}
+extern "C" {
+    pub static mut xmp3_imdctWin: [[core::ffi::c_int; 36usize]; 4usize];
+}
+extern "C" {
+    pub static mut xmp3_ISFMpeg1: [[core::ffi::c_int; 7usize]; 2usize];
+}
+extern "C" {
+    pub static mut xmp3_ISFMpeg2: [[[core::ffi::c_int; 16usize]; 2usize]; 2usize];
+}
+extern "C" {
+    pub static mut xmp3_ISFIIP: [[core::ffi::c_int; 2usize]; 2usize];
+}
+extern "C" {
+    pub static mut xmp3_csa: [[core::ffi::c_int; 2usize]; 8usize];
+}
+extern "C" {
+    pub static xmp3_coef32: [core::ffi::c_int; 31usize];
+}
+extern "C" {
+    pub static xmp3_polyCoef: [core::ffi::c_int; 264usize];
 }
