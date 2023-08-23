@@ -20,7 +20,8 @@ fn main() {
 
     build
         // .define("LUTS_IN_RAM", None)
-        .define("CODE_IN_RAM", None)
+        // .define("CODE_IN_RAM", None)
+        // .define("BYO_BUFFERS", None)
         .file("ffi/picomp3lib/src/bitstream.c")
         .file("ffi/picomp3lib/src/buffers.c")
         .file("ffi/picomp3lib/src/dct32.c")
@@ -36,6 +37,5 @@ fn main() {
         .file("ffi/picomp3lib/src/stproc.c")
         .file("ffi/picomp3lib/src/subband.c")
         .file("ffi/picomp3lib/src/trigtabs.c")
-
         .compile("picomp3lib");
 }
