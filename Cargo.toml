@@ -10,7 +10,30 @@ cc = "1.0"
 
 [dependencies]
 libc = "0.2"
+byte-slice-cast = { version = "1.2.2", optional = true }
 
+[[bin]]
+# convert mp3 to raw, using the FFI interface directly
+name = "ffimp3toraw"
+path = "src/ffi_mp3_to_raw.rs"
+required-features = ["byte-slice-cast"]
+
+# convert mp3 to raw, using the wrapper interface
+[[bin]]
+name = "mp3toraw"
+path = "src/mp3_to_raw.rs"
+required-features = ["byte-slice-cast"]
+
+[[bin]]
+name = "mp3toraw_fixed"
+path = "src/mp3_to_raw_fixed.rs"
+required-features = ["byte-slice-cast"]
+
+# try to decode an mp3 loaded in smaller chunks instead of one big buffer
+[[bin]]
+name = "loadchunks"
+path = "src/load_chunks.rs"
+required-features = ["byte-slice-cast"]
 
 # cargo build/run
 [profile.dev]
