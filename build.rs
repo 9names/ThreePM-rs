@@ -22,6 +22,7 @@ fn main() {
         // .define("LUTS_IN_RAM", None)
         // .define("CODE_IN_RAM", None)
         // .define("BYO_BUFFERS", None)
+        .flag("-mlong-calls")
         .file("ffi/picomp3lib/src/bitstream.c")
         .file("ffi/picomp3lib/src/buffers.c")
         .file("ffi/picomp3lib/src/dct32.c")
