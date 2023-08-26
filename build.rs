@@ -1,3 +1,28 @@
+use std::env;
+
+// defines that affect C library build:
+// BYO_BUFFERS: the picomp3lib uses static buffers by default, if you don't provide alloc
+// the rust library allocates these in a struct if using Mp3Transparent, so we don't want
+// the static allocations
+
+#[cfg(feature="code-in-ram")]
+fn code_in_ram() -> bool {
+    true
+}
+#[cfg(not(feature="code-in-ram"))]
+fn code_in_ram() -> bool {
+    false
+}
+
+#[cfg(feature="byo-buffers")]
+fn byo_buffers() -> bool {
+    true
+}
+#[cfg(not(feature="byo-buffers"))]
+fn byo_buffers() -> bool {
+    false
+}
+
 fn main() {
     println!("cargo:rerun-if-changed=ffi/picomp3lib/src/bitstream.c");
     println!("cargo:rerun-if-changed=ffi/picomp3lib/src/buffers.c");
@@ -14,17 +39,25 @@ fn main() {
     println!("cargo:rerun-if-changed=ffi/picomp3lib/src/stproc.c");
     println!("cargo:rerun-if-changed=ffi/picomp3lib/src/subband.c");
     println!("cargo:rerun-if-changed=ffi/picomp3lib/src/trigtabs.c");
+
     let mut build = cc::Build::new();
+    let target = env::var("TARGET").unwrap();
+    let target_is_cortex_m = if target.starts_with("thumbv6m-") {
+        true
+    } else if target.starts_with("thumbv7m-") {
+        true
+    } else if target.starts_with("thumbv7em-") {
+        true
+    } else if target.starts_with("thumbv8m.base") {
+        true
+    } else if target.starts_with("thumbv8m.main") {
+        true
+    } else {
+        false
+    };
 
     build.include("picomp3lib/src");
-
     build
-        // .define("LUTS_IN_RAM", None)
-        // .define("CODE_IN_RAM", None)
-        // .define("BYO_BUFFERS", None)
-        .flag("-mlong-calls")
-        .debug(false)
-        .opt_level_str("s")
         .file("ffi/picomp3lib/src/bitstream.c")
         .file("ffi/picomp3lib/src/buffers.c")
         .file("ffi/picomp3lib/src/dct32.c")
@@ -39,6 +72,22 @@ fn main() {
         .file("ffi/picomp3lib/src/scalfact.c")
         .file("ffi/picomp3lib/src/stproc.c")
         .file("ffi/picomp3lib/src/subband.c")
-        .file("ffi/picomp3lib/src/trigtabs.c")
-        .compile("picomp3lib");
+        .file("ffi/picomp3lib/src/trigtabs.c");
+
+    if code_in_ram() {
+        build.define("CODE_IN_RAM", None);
+        // putting code in .data when it has debug symbols makes the linker very angry, so disable debug
+        build.debug(false);
+        if target_is_cortex_m {
+            // If we put functions in .data, they need -mlong-calls to be able to call memcpy and non-inlined compiler-builtins
+            // but this isn't compatible with other targets.
+            build
+            .flag("-mlong-calls")
+            .opt_level_str("s");
+        }
+    }
+    if byo_buffers() {
+        build.define("BYO_BUFFERS", None);
+    }
+    build.compile("picomp3lib");
 }

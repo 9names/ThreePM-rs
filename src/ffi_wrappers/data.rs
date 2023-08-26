@@ -11,15 +11,15 @@ use core::ffi::c_void;
 #[derive(Debug)]
 pub struct Mp3Transparent {
     mp3_dec_info: MP3DecInfo,
-    ptd_to: Mp3Info,
+    mp3_info: Mp3Info,
 }
 
 impl Mp3Transparent {
     /// WARNING:
-    /// do not move this.
+    /// do not move this while in a function.
     /// todo: pin or something.
     pub const fn new() -> Self {
-        let ptd_to = Mp3Info::new();
+        let mp3_info = Mp3Info::new();
         let mp3_dec_info = MP3DecInfo {
             FrameHeaderPS: core::ptr::null_mut(),
             SideInfoPS: core::ptr::null_mut(),
@@ -46,26 +46,32 @@ impl Mp3Transparent {
         };
         Self {
             mp3_dec_info,
-            ptd_to,
+            mp3_info,
         }
     }
 
-    /// Initialise pointers in our MP3 struct
-    pub fn init(&mut self) {
+    /// if the pointers haven't been initialised, or this datastructure has move, we need to update our info pointers
+    fn pointers_need_updating(&mut self) -> bool {
+        self.mp3_dec_info.FrameHeaderPS !=
+            core::ptr::addr_of_mut!(self.mp3_info.frame_header) as *mut c_void
+    }
+
+    /// Update pointers in our MP3 struct to point to the ones in ptd_to
+    fn update_pointers(&mut self) {
         self.mp3_dec_info.FrameHeaderPS =
-            core::ptr::addr_of_mut!(self.ptd_to.frame_header) as *mut c_void;
+            core::ptr::addr_of_mut!(self.mp3_info.frame_header) as *mut c_void;
         self.mp3_dec_info.SideInfoPS =
-            core::ptr::addr_of_mut!(self.ptd_to.side_info) as *mut c_void;
+            core::ptr::addr_of_mut!(self.mp3_info.side_info) as *mut c_void;
         self.mp3_dec_info.ScaleFactorInfoPS =
-            core::ptr::addr_of_mut!(self.ptd_to.scale_factor_info) as *mut c_void;
+            core::ptr::addr_of_mut!(self.mp3_info.scale_factor_info) as *mut c_void;
         self.mp3_dec_info.HuffmanInfoPS =
-            core::ptr::addr_of_mut!(self.ptd_to.huffman_info) as *mut c_void;
+            core::ptr::addr_of_mut!(self.mp3_info.huffman_info) as *mut c_void;
         self.mp3_dec_info.DequantInfoPS =
-            core::ptr::addr_of_mut!(self.ptd_to.dequant_info) as *mut c_void;
+            core::ptr::addr_of_mut!(self.mp3_info.dequant_info) as *mut c_void;
         self.mp3_dec_info.IMDCTInfoPS =
-            core::ptr::addr_of_mut!(self.ptd_to.imdct_info) as *mut c_void;
+            core::ptr::addr_of_mut!(self.mp3_info.imdct_info) as *mut c_void;
         self.mp3_dec_info.SubbandInfoPS =
-            core::ptr::addr_of_mut!(self.ptd_to.subband_info) as *mut c_void;
+            core::ptr::addr_of_mut!(self.mp3_info.subband_info) as *mut c_void;
     }
 
     /// Find the offset of the next sync word in the MP3 stream. Use this to find the next frame
@@ -75,6 +81,9 @@ impl Mp3Transparent {
 
     /// Get info for the most recently decoded MP3 frame
     pub fn get_last_frame_info(&mut self) -> MP3FrameInfo {
+        if self.pointers_need_updating() {
+            self.update_pointers();
+        }
         let mut frame = MP3FrameInfo::new();
         unsafe { crate::ffi::MP3GetLastFrameInfo(self.ptr(), &mut frame) };
         frame
@@ -82,6 +91,9 @@ impl Mp3Transparent {
 
     /// Get info for the next MP3 frame
     pub fn get_next_frame_info(&mut self, mp3buf: &[u8]) -> Result<MP3FrameInfo, DecodeErr> {
+        if self.pointers_need_updating() {
+            self.update_pointers();
+        }
         let mut frame = MP3FrameInfo::new();
         let err =
             unsafe { crate::ffi::MP3GetNextFrameInfo(self.ptr(), &mut frame, mp3buf.as_ptr()) };
@@ -100,6 +112,9 @@ impl Mp3Transparent {
         newlen: i32,
         buf: &mut [i16],
     ) -> Result<i32, DecodeErr> {
+        if self.pointers_need_updating() {
+            self.update_pointers();
+        }
         let mut newlen = newlen;
         let err = unsafe {
             crate::ffi::MP3Decode(
