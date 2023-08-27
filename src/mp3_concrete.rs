@@ -1,3 +1,6 @@
+/// High-level MP3 library wrapping functions.
+///
+/// This version uses a Rust-owned struct to own all data associated with the C FFI library.
 use crate::{
     ffi::{
         CriticalBandInfo, DequantInfo, FrameHeader, HuffmanInfo, IMDCTInfo, MP3DecInfo,
@@ -9,12 +12,12 @@ use core::ffi::c_void;
 
 #[allow(dead_code)]
 #[derive(Debug)]
-pub struct Mp3Transparent {
+pub struct Mp3 {
     mp3_dec_info: MP3DecInfo,
     mp3_info: Mp3Info,
 }
 
-impl Mp3Transparent {
+impl Mp3 {
     /// WARNING:
     /// do not move this while in a function.
     /// todo: pin or something.
@@ -52,8 +55,8 @@ impl Mp3Transparent {
 
     /// if the pointers haven't been initialised, or this datastructure has move, we need to update our info pointers
     fn pointers_need_updating(&mut self) -> bool {
-        self.mp3_dec_info.FrameHeaderPS !=
-            core::ptr::addr_of_mut!(self.mp3_info.frame_header) as *mut c_void
+        self.mp3_dec_info.FrameHeaderPS
+            != core::ptr::addr_of_mut!(self.mp3_info.frame_header) as *mut c_void
     }
 
     /// Update pointers in our MP3 struct to point to the ones in ptd_to
@@ -143,7 +146,7 @@ impl Mp3Transparent {
     }
 }
 
-impl Default for Mp3Transparent {
+impl Default for Mp3 {
     fn default() -> Self {
         Self::new()
     }
@@ -158,7 +161,6 @@ pub struct Mp3Info {
     pub dequant_info: DequantInfo,
     pub imdct_info: IMDCTInfo,
     pub subband_info: SubbandInfo,
-    // pub mp3_dec_info: MP3DecInfo,
 }
 
 impl Mp3Info {

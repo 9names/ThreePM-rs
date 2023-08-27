@@ -6,10 +6,11 @@ edition = "2021"
 [features]
 # add some performance-critical functions to .data memory section
 code-in-ram = []
-# exclude from compilation functions that exist for dealing with mp3 info in static memory
-# picomp3lib uses static memory for any target that doesn't have alloc, because the library uses opaque pointers
-# we provide concrete structs for all info, so the user can store in static/stack/Box
-byo-buffers = []
+# picomp3lib (the C lib) uses static memory for any target that doesn't have alloc and hides this behind an opaque pointer.
+# The default impl for picomp3lib-rs uses concrete structs for all info, so the user can choose to store in static/stack/Box.
+# If you enable this feature, you opt out of this and will get an opaque pointer and statically allocated structures
+# Notes: this is slower that the default setting. on cortex-m, this also breaks if you enable LTO. enable at your own risk!
+use-static-buffers = []
 
 [build-dependencies]
 cc = "1.0"
@@ -19,3 +20,8 @@ libc = "0.2"
 
 [dev-dependencies]
 byte-slice-cast = { version = "1.2.2" }
+
+[[example]]
+# irq example uses cortex-m-rt::interrupt, need rt feature for that
+name = "ffi_mp3_to_raw"
+required-features = ["use-static-buffers"]

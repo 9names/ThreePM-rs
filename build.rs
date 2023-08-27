@@ -5,22 +5,22 @@ use std::env;
 // the rust library allocates these in a struct if using Mp3Transparent, so we don't want
 // the static allocations
 
-#[cfg(feature="code-in-ram")]
+#[cfg(feature = "code-in-ram")]
 fn code_in_ram() -> bool {
     true
 }
-#[cfg(not(feature="code-in-ram"))]
+#[cfg(not(feature = "code-in-ram"))]
 fn code_in_ram() -> bool {
     false
 }
 
-#[cfg(feature="byo-buffers")]
-fn byo_buffers() -> bool {
-    true
-}
-#[cfg(not(feature="byo-buffers"))]
+#[cfg(feature = "use-static-buffers")]
 fn byo_buffers() -> bool {
     false
+}
+#[cfg(not(feature = "use-static-buffers"))]
+fn byo_buffers() -> bool {
+    true
 }
 
 fn main() {
@@ -81,9 +81,7 @@ fn main() {
         if target_is_cortex_m {
             // If we put functions in .data, they need -mlong-calls to be able to call memcpy and non-inlined compiler-builtins
             // but this isn't compatible with other targets.
-            build
-            .flag("-mlong-calls")
-            .opt_level_str("s");
+            build.flag("-mlong-calls").opt_level_str("s");
         }
     }
     if byo_buffers() {
