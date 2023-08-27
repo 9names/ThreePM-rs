@@ -7,9 +7,9 @@
 //! finally
 //! ```mplayer audio_raw.wav```
 //! and compare to
-//! ```mplayer ffi/Adafruit_MP3/examples/test.mp3```
+//! ```mplayer gs-16b-2c-44100hz.mp3```
 
-static MP3: &[u8] = include_bytes!("../ffi/Adafruit_MP3/examples/test.mp3");
+static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
 use byte_slice_cast::AsByteSlice;
 use picomp3lib_rs::ffi::*;
 use std::{fs::File, io::Write};
