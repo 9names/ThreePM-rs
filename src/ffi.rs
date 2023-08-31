@@ -309,7 +309,6 @@ pub struct _FrameHeader {
     pub origFlag: core::ffi::c_int,
     pub emphasis: core::ffi::c_int,
     pub CRCWord: core::ffi::c_int,
-    pub sfBand: *const SFBandTable,
 }
 #[test]
 fn bindgen_test_layout__FrameHeader() {
@@ -317,12 +316,12 @@ fn bindgen_test_layout__FrameHeader() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::core::mem::size_of::<_FrameHeader>(),
-        64usize,
+        52usize,
         concat!("Size of: ", stringify!(_FrameHeader))
     );
     assert_eq!(
         ::core::mem::align_of::<_FrameHeader>(),
-        8usize,
+        4usize,
         concat!("Alignment of ", stringify!(_FrameHeader))
     );
     assert_eq!(
@@ -453,16 +452,6 @@ fn bindgen_test_layout__FrameHeader() {
             stringify!(_FrameHeader),
             "::",
             stringify!(CRCWord)
-        )
-    );
-    assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).sfBand) as usize - ptr as usize },
-        56usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_FrameHeader),
-            "::",
-            stringify!(sfBand)
         )
     );
 }
@@ -1291,13 +1280,6 @@ pub type SubbandInfo = _SubbandInfo;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _MP3DecInfo {
-    pub FrameHeaderPS: *mut core::ffi::c_void,
-    pub SideInfoPS: *mut core::ffi::c_void,
-    pub ScaleFactorInfoPS: *mut core::ffi::c_void,
-    pub HuffmanInfoPS: *mut core::ffi::c_void,
-    pub DequantInfoPS: *mut core::ffi::c_void,
-    pub IMDCTInfoPS: *mut core::ffi::c_void,
-    pub SubbandInfoPS: *mut core::ffi::c_void,
     pub mainBuf: [core::ffi::c_uchar; 1940usize],
     pub freeBitrateFlag: core::ffi::c_int,
     pub freeBitrateSlots: core::ffi::c_int,
@@ -1327,87 +1309,17 @@ fn bindgen_test_layout__MP3DecInfo() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::core::mem::size_of::<_MP3DecInfo>(),
-        23856usize,
+        23788usize,
         concat!("Size of: ", stringify!(_MP3DecInfo))
     );
     assert_eq!(
         ::core::mem::align_of::<_MP3DecInfo>(),
-        8usize,
+        4usize,
         concat!("Alignment of ", stringify!(_MP3DecInfo))
     );
     assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).FrameHeaderPS) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_MP3DecInfo),
-            "::",
-            stringify!(FrameHeaderPS)
-        )
-    );
-    assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).SideInfoPS) as usize - ptr as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_MP3DecInfo),
-            "::",
-            stringify!(SideInfoPS)
-        )
-    );
-    assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).ScaleFactorInfoPS) as usize - ptr as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_MP3DecInfo),
-            "::",
-            stringify!(ScaleFactorInfoPS)
-        )
-    );
-    assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).HuffmanInfoPS) as usize - ptr as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_MP3DecInfo),
-            "::",
-            stringify!(HuffmanInfoPS)
-        )
-    );
-    assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).DequantInfoPS) as usize - ptr as usize },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_MP3DecInfo),
-            "::",
-            stringify!(DequantInfoPS)
-        )
-    );
-    assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).IMDCTInfoPS) as usize - ptr as usize },
-        40usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_MP3DecInfo),
-            "::",
-            stringify!(IMDCTInfoPS)
-        )
-    );
-    assert_eq!(
-        unsafe { ::core::ptr::addr_of!((*ptr).SubbandInfoPS) as usize - ptr as usize },
-        48usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(_MP3DecInfo),
-            "::",
-            stringify!(SubbandInfoPS)
-        )
-    );
-    assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).mainBuf) as usize - ptr as usize },
-        56usize,
+        0usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1417,7 +1329,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).freeBitrateFlag) as usize - ptr as usize },
-        1996usize,
+        1940usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1427,7 +1339,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).freeBitrateSlots) as usize - ptr as usize },
-        2000usize,
+        1944usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1437,7 +1349,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).bitrate) as usize - ptr as usize },
-        2004usize,
+        1948usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1447,7 +1359,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).nChans) as usize - ptr as usize },
-        2008usize,
+        1952usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1457,7 +1369,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).samprate) as usize - ptr as usize },
-        2012usize,
+        1956usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1467,7 +1379,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).nGrans) as usize - ptr as usize },
-        2016usize,
+        1960usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1477,7 +1389,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).nGranSamps) as usize - ptr as usize },
-        2020usize,
+        1964usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1487,7 +1399,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).nSlots) as usize - ptr as usize },
-        2024usize,
+        1968usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1497,7 +1409,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).layer) as usize - ptr as usize },
-        2028usize,
+        1972usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1507,7 +1419,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).version) as usize - ptr as usize },
-        2032usize,
+        1976usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1517,7 +1429,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).size) as usize - ptr as usize },
-        2036usize,
+        1980usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1527,7 +1439,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).mainDataBegin) as usize - ptr as usize },
-        2040usize,
+        1984usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1537,7 +1449,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).mainDataBytes) as usize - ptr as usize },
-        2044usize,
+        1988usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1547,7 +1459,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).part23Length) as usize - ptr as usize },
-        2048usize,
+        1992usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1557,7 +1469,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).fh) as usize - ptr as usize },
-        2064usize,
+        2008usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1567,7 +1479,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).si) as usize - ptr as usize },
-        2128usize,
+        2060usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1577,7 +1489,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).sfi) as usize - ptr as usize },
-        2456usize,
+        2388usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1587,7 +1499,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).hi) as usize - ptr as usize },
-        2740usize,
+        2672usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1597,7 +1509,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).di) as usize - ptr as usize },
-        7364usize,
+        7296usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1607,7 +1519,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).mi) as usize - ptr as usize },
-        8204usize,
+        8136usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
@@ -1617,7 +1529,7 @@ fn bindgen_test_layout__MP3DecInfo() {
     );
     assert_eq!(
         unsafe { ::core::ptr::addr_of!((*ptr).sbi) as usize - ptr as usize },
-        15148usize,
+        15080usize,
         concat!(
             "Offset of field: ",
             stringify!(_MP3DecInfo),
