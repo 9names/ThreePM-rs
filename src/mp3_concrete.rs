@@ -46,6 +46,13 @@ impl Mp3 {
             mainDataBegin: 0,
             mainDataBytes: 0,
             part23Length: [[0; 2]; 2],
+            di: DequantInfo{ workBuf: todo!(), cbi: todo!() },
+            fh: FrameHeader{ ver: todo!(), layer: todo!(), crc: todo!(), brIdx: todo!(), srIdx: todo!(), paddingBit: todo!(), privateBit: todo!(), sMode: todo!(), modeExt: todo!(), copyFlag: todo!(), origFlag: todo!(), emphasis: todo!(), CRCWord: todo!(), sfBand: todo!() },
+            si: SideInfo{ mainDataBegin: todo!(), privateBits: todo!(), scfsi: todo!(), sis: todo!() },
+            sfi: ScaleFactorInfo{ sfis: todo!(), sfjs: todo!() },
+            hi: HuffmanInfo{ huffDecBuf: todo!(), nonZeroBound: todo!(), gb: todo!() },
+            mi: IMDCTInfo{ outBuf: todo!(), overBuf: todo!(), numPrevIMDCT: todo!(), prevType: todo!(), prevWinSwitch: todo!(), gb: todo!() },
+            sbi: SubbandInfo{ vbuf: todo!(), vindex: todo!() },
         };
         Self {
             mp3_dec_info,
