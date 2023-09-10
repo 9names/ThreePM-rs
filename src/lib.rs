@@ -7,15 +7,8 @@
 #[allow(non_snake_case)]
 pub mod ffi;
 
-#[cfg(not(feature = "use-static-buffers"))]
 pub use mp3_concrete::Mp3;
-#[cfg(not(feature = "use-static-buffers"))]
 mod mp3_concrete;
-
-#[cfg(feature = "use-static-buffers")]
-mod mp3_opaque;
-#[cfg(feature = "use-static-buffers")]
-pub use mp3_opaque::Mp3;
 
 pub use ffi::_MP3FrameInfo as MP3FrameInfo;
 
