@@ -127,7 +127,7 @@ fn main() {
 
     println!("info: {:?}", frame);
 
-    let newlen = buffer.available() as i32;
+    let mut newlen = buffer.used() as i32;
     println!("mp3 len: {:?}", newlen);
     // todo: work out what a sensible buffer length is
     // check decode_len for an idea. decode_len is in bytes
@@ -138,9 +138,8 @@ fn main() {
     let mut file = File::create("audio_raw.bin").unwrap();
     'decodeloop: while newlen > 0 {
         println!("buffer: {}", buffer);
-        // todo: determine what a good minimum is here.
-        // ideally, we never want to underrun when calling decode
-        if buffer.used() < 140 {
+        // Add data to our buffer if there is room for more
+        if buffer.available() >= CHUNK_SZ {
             println!("Loading more data");
             buffer.load_more(mp3_loader);
         } else {
@@ -183,6 +182,7 @@ fn main() {
                 frame.outputSamps
             );
         }
+        newlen = buffer.used() as i32;
     }
     file.flush().unwrap();
     drop(mp3dec);
