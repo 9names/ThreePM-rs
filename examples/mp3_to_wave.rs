@@ -11,15 +11,17 @@
 
 static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
 use byte_slice_cast::AsByteSlice;
+use hound;
 use picomp3lib_rs::Mp3;
 use std::{fs::File, io::Write, path::Path};
-use hound;
 
 fn main() {
-    println!("mp3-wav start");
+    println!("mp3_to_wave start");
     let mut mp3dec = Mp3::new();
     let mut mp3_slice = &MP3[0..];
     let mut bytes_left = mp3_slice.len() as i32;
+
+    // find the first sync word so we can skip over headers to our mp3 data
     let start = Mp3::find_sync_word(&mp3_slice);
     bytes_left -= start;
     println!("mp3ptr {:?}", mp3_slice.as_ptr(),);
@@ -28,10 +30,11 @@ fn main() {
     // Update our MP3 pointer to skip past the id3 tags
     mp3_slice = &mp3_slice[start as usize..];
 
+    // the first frame of mp3 data can be used to determine the audio format
     let mut frame = mp3dec.get_next_frame_info(mp3_slice).unwrap();
-
     println!("info: {:?}", frame);
 
+    // Set our Wave metadata based on mp3 audio format
     let spec = hound::WavSpec {
         channels: frame.nChans as u16,
         sample_rate: frame.samprate as u32,
@@ -45,14 +48,13 @@ fn main() {
 
     let mut newlen = bytes_left as i32;
     println!("mp3 len: {:?}", newlen);
-    // todo: work out what a sensible buffer length is
-    // check decode_len for an idea. decode_len is in bytes
+
+    // mpeg1 layer3 uses 1152 samples per frame.
+    // each sample is 2 bytes long, so we need 2304 bytes to store 1 frame of data
     const BUFF_LEN: usize = 2304;
     let mut buf = [0i16; BUFF_LEN];
 
-    let mut file = File::create("audio_raw.bin").unwrap();
     while newlen > 0 {
-        // println!("{:?}, {}", mp3_slice.as_ptr(), newlen);
         newlen = mp3dec.decode(&mp3_slice, newlen, &mut buf).unwrap();
         mp3_slice = &mp3_slice[mp3_slice.len() - (newlen as usize)..];
 
