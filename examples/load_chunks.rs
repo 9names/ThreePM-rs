@@ -12,7 +12,7 @@
 static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
 use byte_slice_cast::AsByteSlice;
 use core::slice::Chunks;
-use picomp3lib_rs::*;
+use picomp3lib_rs::mp3::{DecodeErr, Mp3};
 use std::{fmt, fs::File, io::Write};
 
 const BUFF_SZ: usize = 1024;
@@ -164,7 +164,7 @@ fn main() {
                 println!("buffer: {}", buffer);
             }
             Err(e) => {
-                if e == picomp3lib_rs::DecodeErr::InDataUnderflow {
+                if e == DecodeErr::InDataUnderflow {
                     println!("ran out of data while decoding, loading more from file");
                     buffer.load_more(mp3_loader);
                 }

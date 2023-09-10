@@ -13,7 +13,7 @@ static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
 use byte_slice_cast::AsByteSlice;
 use core::slice::Chunks;
 use hound;
-use picomp3lib_rs::*;
+use picomp3lib_rs::mp3::{DecodeErr, Mp3};
 use std::{fmt, fs::File, io::Write, path::Path};
 
 const BUFF_SZ: usize = 1024;
@@ -147,7 +147,7 @@ impl Buffer {
 }
 
 fn main() {
-    println!("mp3 decoding start");
+    println!("load_chunks_wave start");
     let mut mp3dec = Mp3::new();
     let mp3_loader = &mut MP3.chunks(CHUNK_SZ);
 
@@ -166,7 +166,6 @@ fn main() {
 
     // the first frame of mp3 data can be used to determine the audio format
     let mut frame = mp3dec.get_next_frame_info(buffer.borrow_slice()).unwrap();
-
     println!("info: {:?}", frame);
 
     let mut buffered_data_len = buffer.used() as i32;
@@ -214,7 +213,7 @@ fn main() {
                 buffer.increment_start(consumed);
             }
             Err(e) => {
-                if e == picomp3lib_rs::DecodeErr::InDataUnderflow {
+                if e == DecodeErr::InDataUnderflow {
                     print!("mp3 decoder reports data underflow. attempting to loading more from file... ");
                     if !buffer.load_more(mp3_loader) {
                         println!("there was no more data, breaking out of decode loop");
