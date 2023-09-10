@@ -7,8 +7,8 @@
 #[allow(non_snake_case)]
 pub mod ffi;
 
-pub use mp3_concrete::Mp3;
-mod mp3_concrete;
+pub use mp3::Mp3;
+mod mp3;
 
 pub use ffi::_MP3FrameInfo as MP3FrameInfo;
 
