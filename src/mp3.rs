@@ -7,6 +7,12 @@ use crate::ffi::{
 };
 use core::ffi::c_void;
 
+/// MP3 metadata (MPEG type, bitrate, etc)
+///
+/// MP3 does not store its metadata in a file header, instead a copy is in every frame of the MP3
+/// This is handy for a streaming protocol, as you can fully recover a corrupted stream.
+///
+/// MP3FrameInfo is returned by [get_last_frame_info] and [get_next_frame_info]
 pub use crate::ffi::_MP3FrameInfo as MP3FrameInfo;
 
 impl MP3FrameInfo {
@@ -72,6 +78,14 @@ impl From<i32> for DecodeErr {
     }
 }
 
+/// Low-level MP3 decode data
+///
+/// This struct contains all of the data structures required for the
+/// low-level C library to operate as plain-old-data types (structs, arrays).
+/// This allows it to be sized (which makes Rust happy).
+///
+/// Note: this struct is very large by embedded standards (~45KB).
+/// Plan accordingly.
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct Mp3 {
@@ -80,9 +94,6 @@ pub struct Mp3 {
 }
 
 impl Mp3 {
-    /// WARNING:
-    /// do not move this while in a function.
-    /// todo: pin or something.
     pub const fn new() -> Self {
         let mp3_info = Mp3Info::new();
         let mp3_dec_info = MP3DecInfo {
