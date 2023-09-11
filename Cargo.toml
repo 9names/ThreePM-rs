@@ -27,3 +27,7 @@ required-features = ["hound"]
 [[example]]
 name = "load_chunks_wave"
 required-features = ["hound"]
+
+[[example]]
+name = "easymode_wave"
+required-features = ["hound"]
