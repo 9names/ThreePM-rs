@@ -42,19 +42,11 @@ fn main() {
 
     let mut build = cc::Build::new();
     let target = env::var("TARGET").unwrap();
-    let target_is_cortex_m = if target.starts_with("thumbv6m-") {
-        true
-    } else if target.starts_with("thumbv7m-") {
-        true
-    } else if target.starts_with("thumbv7em-") {
-        true
-    } else if target.starts_with("thumbv8m.base") {
-        true
-    } else if target.starts_with("thumbv8m.main") {
-        true
-    } else {
-        false
-    };
+    let target_is_cortex_m = target.starts_with("thumbv6m-")
+        || target.starts_with("thumbv7m-")
+        || target.starts_with("thumbv7em-")
+        || target.starts_with("thumbv8m.base")
+        || target.starts_with("thumbv8m.main");
 
     build.include("picomp3lib/src");
     build
