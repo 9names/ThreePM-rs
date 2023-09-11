@@ -1,6 +1,8 @@
 //! no_std Rust wrapper for the libhelix fixed-point mp3 decoder
 //!
-//! Rust ports of high-level C library functions live in [mp3::Mp3]
+//! Higher-level Rust wrapper lives in [easy_mode::EasyMode]. You probably want to use this
+//!
+//! Rust ports of the higher-level C library functions live in [mp3::Mp3]
 //!
 //! The underlying C mp3 library is exposed through [ffi]
 #![no_std]
@@ -13,4 +15,6 @@
 pub mod ffi;
 
 // pub use mp3::Mp3;
+mod contig_buffer;
+pub mod easy_mode;
 pub mod mp3;
