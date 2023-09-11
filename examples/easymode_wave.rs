@@ -10,16 +10,15 @@
 //! ```mplayer gs-16b-2c-44100hz.mp3```
 
 static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
-use byte_slice_cast::AsByteSlice;
-use core::slice::Chunks;
-use hound;
-use picomp3lib_rs::mp3::{DecodeErr, Mp3};
-use std::{fmt, fs::File, io::Write, path::Path};
+use std::path::Path;
 
-// Substitute here the size of
+/// Size of our fake "sector" to simulate loading data off of a disk
 const CHUNK_SZ: usize = 512;
+
+/// The length of our audio output buffer
+/// This is correct for MPEG-1 Layer 3, MPEG-2 Layer 3 is smaller so should be fine
 const BUFF_LEN: usize = 2304;
-use picomp3lib_rs::easy_mode;
+use picomp3lib_rs::easy_mode::{self, EasyModeErr};
 
 fn main() {
     println!("easymode decode start!");
@@ -45,11 +44,11 @@ fn main() {
         sample_format: hound::SampleFormat::Int,
     };
 
+    // Set up our wave file writer
     let path: &Path = "audio.wav".as_ref();
-
     let mut wave_file = hound::WavWriter::create(path, spec).unwrap();
 
-    while easy.buffer_used() > 0 {
+    loop {
         // if the buffer has space for another chunk of data from our source, load it
         if easy.buffer_free() >= CHUNK_SZ {
             if let Some(mp3data) = mp3_loader.next() {
@@ -58,14 +57,30 @@ fn main() {
             }
         }
 
+        // decode the next chunk of mp3
         match easy.decode(&mut buf) {
             Ok(decoded_samples) => {
+                // We successfully decoded! Write this data into a wave file
                 for sample in &buf[0..decoded_samples] {
                     wave_file.write_sample(*sample).unwrap();
                 }
             }
-            Err(_) => {
-                break;
+            Err(e) => {
+                // We can recover from data underflow if there's still some more data in our MP3 file
+                if e == EasyModeErr::InDataUnderflow {
+                    print!("mp3 decoder reports data underflow. attempting to loading more from file... ");
+                    if let Some(mp3data) = mp3_loader.next() {
+                        // no need to check how much was added, we know that it's large enough to fit
+                        easy.add_data(mp3data);
+                    } else {
+                        println!("there is no more data to add, breaking out of decode loop");
+                        break;
+                    }
+                } else {
+                    // Assume all other errors are unrecoverable
+                    println!("we hit error {e:?} while decoding, give up on decoding any more");
+                    break;
+                }
             }
         }
     }
