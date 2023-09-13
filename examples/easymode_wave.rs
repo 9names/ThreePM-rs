@@ -28,12 +28,41 @@ fn main() {
     // fill up the mp3 decoder's buffer before starting the decode
     while easy.buffer_free() >= CHUNK_SZ {
         if let Some(mp3data) = mp3_loader.next() {
-            easy.add_data(mp3data);
+            easy.add_data_no_sync(mp3data);
         } else {
             panic!("Out of data!");
         }
     }
+
+    let id3 = easy.find_id3v2();
+    let headerend = if let Some(id3) = id3 {
+        println!(
+            "Found ID3v2 at offset {}. Tag version: 2.{}.{}, flags {}, length {}",
+            id3.0, id3.1, id3.2, id3.3, id3.4
+        );
+        // start of header + size of header + length
+        id3.0 + 10 + id3.4
+    } else {
+        0
+    };
+    if headerend != 0 {
+        let mut bytes_to_remove = headerend;
+        while bytes_to_remove > 0 {
+            bytes_to_remove -= easy.buffer_skip(bytes_to_remove);
+            while easy.buffer_free() >= CHUNK_SZ {
+                if let Some(mp3data) = mp3_loader.next() {
+                    easy.add_data_no_sync(mp3data);
+                } else {
+                    panic!("Out of data!");
+                }
+            }
+        }
+    }
+    // up until now we haven't been looking for start of frame. add_data will do that
+    easy.add_data(&[]);
+
     let frame = easy.mp3_info().expect("Could not find MP3 frame in buffer");
+    println!("First MP3 frame info: {:?}", frame);
     let mut buf = [0i16; BUFF_LEN];
 
     // Set our Wave metadata based on mp3 audio format
@@ -68,7 +97,7 @@ fn main() {
             Err(e) => {
                 // We can recover from data underflow if there's still some more data in our MP3 file
                 if e == EasyModeErr::InDataUnderflow {
-                    print!("mp3 decoder reports data underflow. attempting to loading more from file... ");
+                    println!("mp3 decoder reports data underflow. attempting to loading more from file... ");
                     if let Some(mp3data) = mp3_loader.next() {
                         // no need to check how much was added, we know that it's large enough to fit
                         easy.add_data(mp3data);
