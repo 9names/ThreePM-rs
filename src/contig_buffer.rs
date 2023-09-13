@@ -86,7 +86,7 @@ impl Buffer {
         }
         let loadsize = usize::min(self.tail_free(), data.len());
         let newend = self.buff_end + loadsize;
-        self.mp3_byte_buffer[(self.buff_end)..(newend)].copy_from_slice(data);
+        self.mp3_byte_buffer[(self.buff_end)..(newend)].copy_from_slice(&data[0..loadsize]);
         self.buff_end = newend;
 
         loadsize
