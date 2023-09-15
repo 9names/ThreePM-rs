@@ -11,10 +11,7 @@
 
 static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
 use byte_slice_cast::AsByteSlice;
-use picomp3lib_rs::{
-    ffi::*,
-    mp3::{DecodeErr, Mp3},
-};
+use picomp3lib_rs::{ffi::*, mp3::Mp3};
 use std::{fs::File, io::Write};
 
 fn main() {
@@ -60,7 +57,7 @@ fn main() {
 
     let decode_len = (frame.bitsPerSample >> 3) * frame.outputSamps;
     println!("length of each frame = {:?}", decode_len);
-    let mut newlen = bytes_left as i32;
+    let mut newlen = bytes_left;
     println!("mp3 len: {:?}", newlen);
     // todo: work out what a sensible buffer length is
     // check decode_len for an idea. decode_len is in bytes
@@ -94,7 +91,7 @@ fn main() {
         // get info about the last frame decoded
         unsafe { MP3GetLastFrameInfo(mp3dec, &mut frame) };
         if frame.outputSamps <= BUFF_LEN as i32 {
-            file.write_all((&(buf[0..(frame.outputSamps) as usize])).as_byte_slice())
+            file.write_all((buf[0..(frame.outputSamps) as usize]).as_byte_slice())
                 .unwrap();
         } else {
             println!(

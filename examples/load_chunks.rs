@@ -80,9 +80,9 @@ impl Buffer {
         while self.available() >= CHUNK_SZ {
             let newdata = loader.next();
             match newdata {
-                Some(d) => {
-                    for i in 0..d.len() {
-                        self.mp3_byte_buffer[self.buff_end] = d[i];
+                Some(data_slice) => {
+                    for data in data_slice {
+                        self.mp3_byte_buffer[self.buff_end] = *data;
                         self.buff_end += 1;
                     }
                 }
@@ -174,7 +174,7 @@ fn main() {
         // get info about the last frame decoded
         frame = mp3dec.get_last_frame_info();
         if frame.outputSamps <= BUFF_LEN as i32 {
-            file.write_all((&(buf[0..(frame.outputSamps) as usize])).as_byte_slice())
+            file.write_all((buf[0..(frame.outputSamps) as usize]).as_byte_slice())
                 .unwrap();
         } else {
             println!(
@@ -185,6 +185,4 @@ fn main() {
         newlen = buffer.used() as i32;
     }
     file.flush().unwrap();
-    drop(mp3dec);
-    println!("Should be free now");
 }
