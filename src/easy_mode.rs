@@ -76,14 +76,16 @@ impl EasyMode {
         to_remove
     }
 
+    /// Skip over ID3 and anything else at the start of an MP3 stream.
+    /// Returns true when we've got a valid MP3 frame
     pub fn mp3_decode_ready(&mut self) -> bool {
         if self.buffer_used() == 0 {
             false
         } else {
             if !self.parsed_id3 {
+                self.parsed_id3 = true;
                 let id3 = self.find_id3v2();
                 self.bytes_to_skip = if let Some(id3) = id3 {
-                    self.parsed_id3 = true;
                     // start of header + size of header + length
                     id3.0 + 10 + id3.4
                 } else {
