@@ -8,6 +8,8 @@ pub struct EasyMode {
     buffer: contig_buffer::Buffer,
     sync: bool,
     have_decoded: bool,
+    parsed_id3: bool,
+    bytes_to_skip: usize,
 }
 
 impl EasyMode {
@@ -18,6 +20,8 @@ impl EasyMode {
             buffer: contig_buffer::Buffer::new(),
             sync: false,
             have_decoded: false,
+            parsed_id3: false,
+            bytes_to_skip: 0,
         }
     }
 
@@ -25,6 +29,11 @@ impl EasyMode {
     /// This function will also attempt to find the start of stream
     pub fn add_data(&mut self, data: &[u8]) -> usize {
         let bytes_added = self.buffer.load_slice(data);
+        let _ = self.find_next_sync_word();
+        bytes_added
+    }
+
+    pub fn find_next_sync_word(&mut self) -> bool {
         if !self.sync {
             let start = Mp3::find_sync_word(self.buffer.borrow_slice());
             if start >= 0 {
@@ -42,7 +51,7 @@ impl EasyMode {
                 self.buffer.increment_start(self.buffer.used() - 3);
             }
         }
-        bytes_added
+        self.sync
     }
 
     /// Add MP3 data to the EasyMode internal MP3 stream buffer
@@ -65,6 +74,32 @@ impl EasyMode {
         let to_remove = core::cmp::min(self.buffer.used(), count);
         self.buffer.increment_start(to_remove);
         to_remove
+    }
+
+    pub fn mp3_decode_ready(&mut self) -> bool {
+        if self.buffer_used() == 0 {
+            false
+        } else {
+            if !self.parsed_id3 {
+                let id3 = self.find_id3v2();
+                self.bytes_to_skip = if let Some(id3) = id3 {
+                    self.parsed_id3 = true;
+                    // start of header + size of header + length
+                    id3.0 + 10 + id3.4
+                } else {
+                    0
+                };
+            };
+            if self.bytes_to_skip > 0 {
+                let bytes_to_skip = core::cmp::min(self.buffer_used(), self.bytes_to_skip);
+                self.buffer_skip(bytes_to_skip);
+                self.bytes_to_skip -= bytes_to_skip;
+            } else {
+                let _ = self.find_next_sync_word();
+            }
+
+            self.parsed_id3 && self.bytes_to_skip == 0 && self.sync
+        }
     }
 
     /// Decode the next MP3 audio frame after checking that the output buffer is large enough
@@ -138,10 +173,10 @@ impl EasyMode {
         let window = self.buffer.borrow_slice().windows(10);
         for (offset, slice) in window.enumerate() {
             if let [b'I', b'D', b'3', major, minor, flags, s1, s2, s3, s4] = slice {
-                let (s1, s2, s3, s4) = (*s1 as usize, *s2 as usize, *s3 as usize, *s4 as usize);
                 // The ID3v2 tag size is stored as a 32 bit synchsafe integer, making a total of 28 effective bits (representing up to 256MB).
                 // a syncsafe integer is a 7bit integer where the top bit is always zero.
                 if (s1 | s2 | s3 | s4) & 0b1000_0000 != 0b1000_0000 {
+                    let (s1, s2, s3, s4) = (*s1 as usize, *s2 as usize, *s3 as usize, *s4 as usize);
                     let size = s4 | s3 << 7 | s2 << 14 | s1 << 21;
                     return Some((offset, *major, *minor, *flags, size));
                 }
