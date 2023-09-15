@@ -15,7 +15,7 @@ use picomp3lib_rs::mp3::Mp3;
 use std::{fs::File, io::Write};
 
 fn main() {
-    println!("Adafruit-mp3 decoding start");
+    println!("mp3_to_raw start");
     let mut mp3dec = Mp3::new();
     let mut mp3_slice = &MP3[0..];
     let mut bytes_left = mp3_slice.len() as i32;

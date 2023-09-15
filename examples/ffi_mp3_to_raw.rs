@@ -15,7 +15,7 @@ use picomp3lib_rs::{ffi::*, mp3::Mp3};
 use std::{fs::File, io::Write};
 
 fn main() {
-    println!("Adafruit-mp3 decoding start");
+    println!("ffi_mp3_to_raw start");
     type Mp3ptrT = *const u8;
     type Mp3ptrptrT = *mut Mp3ptrT;
     let mut mp3ptr: Mp3ptrT = MP3.as_ptr();

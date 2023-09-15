@@ -106,7 +106,7 @@ impl Buffer {
 }
 
 fn main() {
-    println!("Adafruit-mp3 decoding start");
+    println!("load_chunks start");
     let mut mp3dec = Mp3::new();
     let mp3_loader = &mut MP3.chunks(CHUNK_SZ);
 
