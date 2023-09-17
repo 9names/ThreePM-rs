@@ -88,8 +88,8 @@ impl EasyMode {
                 self.parsed_id3 = true;
                 let id3 = Mp3::find_id3v2(self.buffer.borrow_slice());
                 self.bytes_to_skip = if let Some(id3) = id3 {
-                    // start of header + size of header + length
-                    id3.0 + 10 + id3.4
+                    // start of header + size of header + length of id3v2 info
+                    id3.0 + 10 + id3.1.size
                 } else {
                     0
                 };

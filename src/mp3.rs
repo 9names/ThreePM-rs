@@ -15,6 +15,44 @@ use core::ffi::c_void;
 /// MP3FrameInfo is returned by [get_last_frame_info] and [get_next_frame_info]
 pub use crate::ffi::_MP3FrameInfo as MP3FrameInfo;
 
+#[derive(Debug)]
+pub struct Id3v2Flags {
+    /// indicates that unsynchronisation is applied on all frames
+    pub unsynchronisation: bool,
+    /// indicates that the header is followed by an extended header
+    pub extended_header: bool,
+    /// an ‘experimental indicator’. This flag SHALL always be set when the tag is in an experimental stage
+    pub experimental: bool,
+    /// indicates a footer is present at the very end of the tag
+    pub footer_present: bool,
+}
+
+#[derive(PartialEq, Eq, Debug)]
+pub enum Id3v2Version {
+    /// ID3v2.0
+    ID3v2_0,
+    /// ID3v2.1
+    ID3v2_1,
+    /// ID3v2.2
+    ID3v2_2,
+    /// ID3v2.3
+    ID3v2_3,
+    /// ID3v2.4
+    ID3v2_4,
+    /// Major version isn't 2 and minor version isn't 0-4, unknown or invalid version
+    Invalid,
+}
+
+#[derive(Debug)]
+pub struct Id3v2 {
+    /// Id3v2 version
+    pub version: Id3v2Version,
+    /// Id3v2 flags
+    pub flags: Id3v2Flags,
+    /// Length of the Id3v2 payload (excludes header length)
+    pub size: usize,
+}
+
 impl MP3FrameInfo {
     pub fn new() -> MP3FrameInfo {
         MP3FrameInfo {
@@ -243,16 +281,39 @@ impl Mp3 {
     // yy yy is the version, xx is flags, zz zz zz zz is the ID3v2 tag size.
     //
     /// Find and decode ID3v2 header info
-    pub fn find_id3v2(mp3buf: &[u8]) -> Option<(usize, u8, u8, u8, usize)> {
+    /// Returns the offset in the provided slice where it found the tag and the decoded tag header, or None
+    pub fn find_id3v2(mp3buf: &[u8]) -> Option<(usize, Id3v2)> {
         let window = mp3buf.windows(10);
         for (offset, slice) in window.enumerate() {
             if let [b'I', b'D', b'3', major, minor, flags, s1, s2, s3, s4] = slice {
+                let version = match (major, minor) {
+                    (2, 2) => Id3v2Version::ID3v2_2,
+                    (2, 3) => Id3v2Version::ID3v2_3,
+                    (2, 4) => Id3v2Version::ID3v2_4,
+                    (_, _) => Id3v2Version::Invalid,
+                };
+                let id3v2_flags = Id3v2Flags {
+                    unsynchronisation: flags & 0b1000_0000 == 0b1000_0000,
+                    extended_header: flags & 0b0100_0000 == 0b0100_0000,
+                    experimental: flags & 0b0010_0000 == 0b0010_0000,
+                    footer_present: flags & 0b0001_0000 == 0b0001_0000,
+                };
+                // Only the top 4 bits are valid flags, the bottom 4 were never used
+                let valid_flags = flags & 0b0000_1111 != 0b0000_1111;
                 // The ID3v2 tag size is stored as a 32 bit synchsafe integer, making a total of 28 effective bits (representing up to 256MB).
                 // a syncsafe integer is a 7bit integer where the top bit is always zero.
-                if (s1 | s2 | s3 | s4) & 0b1000_0000 != 0b1000_0000 {
+                let valid_syncsafe = (s1 | s2 | s3 | s4) & 0b1000_0000 != 0b1000_0000;
+                if version == Id3v2Version::Invalid && valid_syncsafe && valid_flags {
                     let (s1, s2, s3, s4) = (*s1 as usize, *s2 as usize, *s3 as usize, *s4 as usize);
                     let size = s4 | s3 << 7 | s2 << 14 | s1 << 21;
-                    return Some((offset, *major, *minor, *flags, size));
+                    return Some((
+                        offset,
+                        Id3v2 {
+                            version,
+                            flags: id3v2_flags,
+                            size,
+                        },
+                    ));
                 }
             }
         }
