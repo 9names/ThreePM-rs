@@ -10,6 +10,7 @@ pub struct EasyMode {
     have_decoded: bool,
     parsed_id3: bool,
     bytes_to_skip: usize,
+    frame_info: Option<MP3FrameInfo>,
 }
 
 impl EasyMode {
@@ -22,6 +23,7 @@ impl EasyMode {
             have_decoded: false,
             parsed_id3: false,
             bytes_to_skip: 0,
+            frame_info: None,
         }
     }
 
@@ -41,8 +43,8 @@ impl EasyMode {
                 self.sync = true;
                 // Also try to get frame info for next frame
                 let f = self.mp3.get_next_frame_info(self.buffer.borrow_slice());
-                if f.is_ok() {
-                    // we should check *two* frames to be very sure, but leave it at one for now.
+                if let Ok(frame) = f {
+                    self.frame_info = Some(frame);
                     self.have_decoded = true;
                 }
             } else {
@@ -122,6 +124,7 @@ impl EasyMode {
                     self.have_decoded = true;
                     let consumed = oldlen - newlen as usize;
                     self.buffer.increment_start(consumed);
+                    self.frame_info = Some(next_frame);
                     Ok(samples)
                 }
                 Err(e) => Err(e.into()),
@@ -145,11 +148,13 @@ impl EasyMode {
             .decode(self.buffer.borrow_slice(), buffered_data_len, output_audio)
         {
             Ok(newlen) => {
-                let frame = self.mp3.get_last_frame_info();
+                self.frame_info = Some(self.mp3.get_last_frame_info());
+                // we just set this so the unwrap should never fail
+                let output_samps = unsafe {self.frame_info.unwrap_unchecked().outputSamps};
                 let consumed = oldlen as usize - newlen as usize;
                 self.buffer.increment_start(consumed);
                 self.have_decoded = true;
-                Ok(frame.outputSamps as usize)
+                Ok(output_samps as usize)
             }
             Err(e) => Err(e.into()),
         }
@@ -157,8 +162,8 @@ impl EasyMode {
 
     /// Get MP3 metadata from the last MP3 frame decoded
     pub fn mp3_info(&mut self) -> Result<MP3FrameInfo, EasyModeErr> {
-        if self.have_decoded {
-            Ok(self.mp3.get_last_frame_info())
+        if let Some(frameinfo) = self.frame_info {
+            Ok(frameinfo)
         } else {
             let frame = self.mp3.get_next_frame_info(self.buffer.borrow_slice())?;
             Ok(frame)
