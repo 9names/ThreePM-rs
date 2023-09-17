@@ -10,11 +10,10 @@
 //! ```mplayer gs-16b-2c-44100hz.mp3```
 
 static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
-use byte_slice_cast::AsByteSlice;
 use core::slice::Chunks;
 use hound;
 use picomp3lib_rs::mp3::{DecodeErr, Mp3};
-use std::{fmt, fs::File, io::Write, path::Path};
+use std::{fmt, path::Path};
 
 const BUFF_SZ: usize = 1024;
 const CHUNK_SZ: usize = 512;
@@ -183,10 +182,8 @@ fn main() {
     let path: &Path = "audio.wav".as_ref();
 
     let mut writer = hound::WavWriter::create(path, spec).unwrap();
-    let mut inc = 0;
 
     while buffered_data_len > 0 {
-        inc += 1;
         // if the buffer has space for another chunk of data from our source, load it
         if buffer.available() >= CHUNK_SZ {
             if !buffer.load_more(mp3_loader) {

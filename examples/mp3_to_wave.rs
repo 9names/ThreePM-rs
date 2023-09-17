@@ -10,10 +10,9 @@
 //! ```mplayer gs-16b-2c-44100hz.mp3```
 
 static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
-use byte_slice_cast::AsByteSlice;
 use hound;
 use picomp3lib_rs::mp3::Mp3;
-use std::{fs::File, io::Write, path::Path};
+use std::path::Path;
 
 fn main() {
     println!("mp3_to_wave start");
