@@ -84,18 +84,16 @@ impl From<i32> for DecodeErr {
 /// low-level C library to operate as plain-old-data types (structs, arrays).
 /// This allows it to be sized (which makes Rust happy).
 ///
-/// Note: this struct is very large by embedded standards (~45KB).
+/// Note: this struct is very large by embedded standards (~24KB).
 /// Plan accordingly.
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct Mp3 {
     mp3_dec_info: MP3DecInfo,
-    mp3_info: Mp3Info,
 }
 
 impl Mp3 {
     pub const fn new() -> Self {
-        let mp3_info = Mp3Info::new();
         let mp3_dec_info = MP3DecInfo {
             mainBuf: [0; 1940],
             freeBitrateFlag: 0,
@@ -186,10 +184,7 @@ impl Mp3 {
                 vindex: 0,
             },
         };
-        Self {
-            mp3_dec_info,
-            mp3_info,
-        }
+        Self { mp3_dec_info }
     }
 
     /// Find the offset of the next sync word in the MP3 stream. Use this to find the next frame
@@ -253,137 +248,6 @@ impl Mp3 {
 }
 
 impl Default for Mp3 {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-#[derive(Debug, Copy, Clone)]
-pub struct Mp3Info {
-    pub frame_header: FrameHeader,
-    pub side_info: SideInfo,
-    pub scale_factor_info: ScaleFactorInfo,
-    pub huffman_info: HuffmanInfo,
-    pub dequant_info: DequantInfo,
-    pub imdct_info: IMDCTInfo,
-    pub subband_info: SubbandInfo,
-}
-
-impl Mp3Info {
-    pub const fn new() -> Self {
-        let fh = FrameHeader {
-            ver: 0,
-            layer: 0,
-            crc: 0,
-            brIdx: 0,
-            srIdx: 0,
-            paddingBit: 0,
-            privateBit: 0,
-            sMode: 0,
-            modeExt: 0,
-            copyFlag: 0,
-            origFlag: 0,
-            emphasis: 0,
-            CRCWord: 0,
-        };
-        let sh = SideInfo {
-            mainDataBegin: 0,
-            privateBits: 0,
-            scfsi: [[0; 4]; 2],
-            sis: [[SideInfoSub {
-                part23Length: 0,
-                nBigvals: 0,
-                globalGain: 0,
-                sfCompress: 0,
-                winSwitchFlag: 0,
-                blockType: 0,
-                mixedBlock: 0,
-                tableSelect: [0; 3],
-                subBlockGain: [0; 3],
-                region0Count: 0,
-                region1Count: 0,
-                preFlag: 0,
-                sfactScale: 0,
-                count1TableSelect: 0,
-            }; 2]; 2],
-        };
-        let sfi = ScaleFactorInfo {
-            sfis: [
-                [
-                    ScaleFactorInfoSub {
-                        l: [0; 23],
-                        s: [[0; 3]; 13],
-                    },
-                    ScaleFactorInfoSub {
-                        l: [0; 23],
-                        s: [[0; 3]; 13],
-                    },
-                ],
-                [
-                    ScaleFactorInfoSub {
-                        l: [0; 23],
-                        s: [[0; 3]; 13],
-                    },
-                    ScaleFactorInfoSub {
-                        l: [0; 23],
-                        s: [[0; 3]; 13],
-                    },
-                ],
-            ],
-            sfjs: ScaleFactorJS {
-                intensityScale: 0,
-                slen: [0; 4],
-                nr: [0; 4],
-            },
-        };
-        let hi = HuffmanInfo {
-            huffDecBuf: [[0; 576]; 2],
-            nonZeroBound: [0; 2],
-            gb: [0; 2],
-        };
-        let di = DequantInfo {
-            workBuf: [0; 198],
-            cbi: [
-                CriticalBandInfo {
-                    cbType: 0,
-                    cbEndS: [0; 3],
-                    cbEndSMax: 0,
-                    cbEndL: 0,
-                },
-                CriticalBandInfo {
-                    cbType: 0,
-                    cbEndS: [0; 3],
-                    cbEndSMax: 0,
-                    cbEndL: 0,
-                },
-            ],
-        };
-        let ii = IMDCTInfo {
-            outBuf: [[[0; 32]; 18]; 2],
-            overBuf: [[0; 288]; 2],
-            numPrevIMDCT: [0; 2],
-            prevType: [0; 2],
-            prevWinSwitch: [0; 2],
-            gb: [0; 2],
-        };
-        let sbi = SubbandInfo {
-            vbuf: [0; 2176],
-            vindex: 0,
-        };
-
-        Self {
-            frame_header: fh,
-            side_info: sh,
-            scale_factor_info: sfi,
-            huffman_info: hi,
-            dequant_info: di,
-            imdct_info: ii,
-            subband_info: sbi,
-        }
-    }
-}
-
-impl Default for Mp3Info {
     fn default() -> Self {
         Self::new()
     }
