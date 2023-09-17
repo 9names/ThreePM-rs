@@ -237,6 +237,28 @@ impl Mp3 {
         }
     }
 
+    // from https://mutagen-specs.readthedocs.io/en/latest/id3/id3v2.4.0-structure.html
+    // ID3 tag format is as follows
+    // $49 44 33 yy yy xx zz zz zz zz
+    // yy yy is the version, xx is flags, zz zz zz zz is the ID3v2 tag size.
+    //
+    /// Find and decode ID3v2 header info
+    pub fn find_id3v2(mp3buf: &[u8]) -> Option<(usize, u8, u8, u8, usize)> {
+        let window = mp3buf.windows(10);
+        for (offset, slice) in window.enumerate() {
+            if let [b'I', b'D', b'3', major, minor, flags, s1, s2, s3, s4] = slice {
+                // The ID3v2 tag size is stored as a 32 bit synchsafe integer, making a total of 28 effective bits (representing up to 256MB).
+                // a syncsafe integer is a 7bit integer where the top bit is always zero.
+                if (s1 | s2 | s3 | s4) & 0b1000_0000 != 0b1000_0000 {
+                    let (s1, s2, s3, s4) = (*s1 as usize, *s2 as usize, *s3 as usize, *s4 as usize);
+                    let size = s4 | s3 << 7 | s2 << 14 | s1 << 21;
+                    return Some((offset, *major, *minor, *flags, size));
+                }
+            }
+        }
+        None
+    }
+
     /// Expose underlying C void pointer HMP3Decoder. For when you need to use ffi functions that aren't wrapped
     ///
     /// # Safety
