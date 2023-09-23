@@ -2,6 +2,7 @@
 name = "threepm"
 version = "0.1.0"
 edition = "2021"
+categories = ["embedded", "no-std::no-alloc", "multimedia::audio"]
 
 [features]
 # add some performance-critical functions to .data memory section
