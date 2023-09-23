@@ -11,8 +11,8 @@
 
 static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
 use hound;
-use threepm::mp3::Mp3;
 use std::path::Path;
+use threepm::mp3::Mp3;
 
 fn main() {
     println!("mp3_to_wave start");

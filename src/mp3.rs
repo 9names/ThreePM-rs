@@ -1,6 +1,4 @@
-/// High-level MP3 library wrapping functions.
-///
-/// This version uses a Rust-owned struct to own all data associated with the C FFI library.
+//! Hand-written Rust wrappers for `ThreePM`, as well as functionality not provided by `ThreePM` such as ID3v2 header skipping.
 use crate::ffi::{
     CriticalBandInfo, DequantInfo, FrameHeader, HuffmanInfo, IMDCTInfo, MP3DecInfo,
     ScaleFactorInfo, ScaleFactorInfoSub, ScaleFactorJS, SideInfo, SideInfoSub, SubbandInfo,
@@ -12,9 +10,10 @@ use core::ffi::c_void;
 /// MP3 does not store its metadata in a file header, instead a copy is in every frame of the MP3
 /// This is handy for a streaming protocol, as you can fully recover a corrupted stream.
 ///
-/// MP3FrameInfo is returned by [get_last_frame_info] and [get_next_frame_info]
+/// MP3FrameInfo is returned by [get_last_frame_info](crate::mp3::Mp3::get_last_frame_info) and [get_next_frame_info](crate::mp3::Mp3::get_next_frame_info)
 pub use crate::ffi::_MP3FrameInfo as MP3FrameInfo;
 
+/// ID3v2 option flags
 #[derive(Debug)]
 pub struct Id3v2Flags {
     /// indicates that unsynchronisation is applied on all frames
@@ -27,6 +26,7 @@ pub struct Id3v2Flags {
     pub footer_present: bool,
 }
 
+/// ID3v2 version number
 #[derive(PartialEq, Eq, Debug)]
 pub enum Id3v2Version {
     /// ID3v2.0
@@ -43,6 +43,7 @@ pub enum Id3v2Version {
     Invalid,
 }
 
+/// ID3v2 info extracted from a ID3v2 header
 #[derive(Debug)]
 pub struct Id3v2 {
     /// Id3v2 version
@@ -116,7 +117,7 @@ impl From<i32> for DecodeErr {
     }
 }
 
-/// Low-level MP3 decode data
+/// MP3 decoding context object
 ///
 /// This struct contains all of the data structures required for the
 /// low-level C library to operate as plain-old-data types (structs, arrays).

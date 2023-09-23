@@ -1,8 +1,66 @@
-#![deny(unsafe_op_in_unsafe_fn)]
+//! A high-level, user friendly Rust abstraction around `ThreePM`. This should be what you want to use wherever possible.
+//! # Usage:
+//!
+//! ```rust
+//! use threepm::easy_mode::{self, EasyModeErr};
+//!
+//! // In the real code you could include an MP3 in your program using the following line
+//! // static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
+//! // This will stand in for our real MP3 for now to make the docs more portable.
+//! static MP3: &[u8] = [0u8;512];
+//! // Size of our fake "sector" to simulate loading data off of a disk
+//! const CHUNK_SZ: usize = 512;
+//!
+//! fn main() {
+//!    // Set up our EasyMode decoder
+//!    let mut easy = easy_mode::EasyMode::new();
+//!    // Set up the source of our MP3 data
+//!    let mp3_loader = &mut MP3.chunks(CHUNK_SZ);
+//!    // Set up the buffer for the decoded audio data to be stored in
+//!    let mut buf = [0i16; 2304];
+//!
+//!    // skip past the id3 tags and anything else up to the first mp3 sync tag
+//!    while !easy.mp3_decode_ready() {
+//!        while easy.buffer_free() >= CHUNK_SZ {
+//!            if let Some(mp3data) = mp3_loader.next() {
+//!                easy.add_data_no_sync(mp3data);
+//!            } else {
+//!                panic!("Out of data!");
+//!            }
+//!        }
+//!    }
+//!    // We're past the header now, so we should be able to correctly decode an MP3 frame
+//!    // Metadata is stored in every frame, so check that now:
+//!    let frame = easy.mp3_info().expect("Could not find MP3 frame in buffer");
+//!    println!("First MP3 frame info: {:?}", frame);
+//!    loop {
+//!           // if the buffer has space for another chunk of data from our source, load it
+//!           if easy.buffer_free() >= CHUNK_SZ {
+//!               if let Some(mp3data) = mp3_loader.next() {
+//!                   easy.add_data(mp3data);
+//!               }
+//!           }
+//!           // decode the next chunk of mp3
+//!           match easy.decode(&mut buf) {
+//!               Ok(_decoded_samples) => {
+//!                   // Do something with decoded_samples (like play or store them)
+//!               }
+//!               Err(_e) => {
+//!                   // Handle error by aborting, skipping a frame, adding more data, etc.
+//!                   // This example will just exit because this is simpler
+//!                   break;
+//!               }
+//!           }
+//!       }
+//! }
+//!
+//! ```
 
+#![deny(unsafe_op_in_unsafe_fn)]
 use crate::contig_buffer;
 use crate::mp3::{DecodeErr, MP3FrameInfo, Mp3};
 
+/// A high-level, user friendly Rust abstraction around `ThreePM`
 pub struct EasyMode {
     mp3: Mp3,
     buffer: contig_buffer::Buffer,
@@ -27,7 +85,7 @@ impl EasyMode {
         }
     }
 
-    /// Add MP3 data to the EasyMode internal MP3 stream buffer
+    /// Add MP3 data to the EasyMode internal MP3 stream buffer.
     /// This function will also attempt to find the start of stream
     pub fn add_data(&mut self, data: &[u8]) -> usize {
         let bytes_added = self.buffer.load_slice(data);
@@ -35,6 +93,7 @@ impl EasyMode {
         bytes_added
     }
 
+    /// Every mp3 frame starts with a sync word. Find the next one, and check if it's a valid frame
     pub fn find_next_sync_word(&mut self) -> bool {
         if !self.sync {
             let start = Mp3::find_sync_word(self.buffer.borrow_slice());
