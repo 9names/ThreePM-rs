@@ -18,14 +18,10 @@ hound = {version = "3.5", optional = true }
 byte-slice-cast = { version = "1.2.2" }
 
 [[example]]
-name = "ffi_mp3_to_raw"
+name = "mp3_to_raw"
 
 [[example]]
 name = "mp3_to_wave"
-required-features = ["hound"]
-
-[[example]]
-name = "load_chunks_wave"
 required-features = ["hound"]
 
 [[example]]
