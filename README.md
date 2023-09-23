@@ -3,6 +3,20 @@ Rust bindings for [ThreePM](ffi/ThreePM/README.md) - a fixed-point MP3 decoding 
 
 It supports decoding all MP3 CBR files. VBR is not currently supported.
 
+### Usage
+
+Add `threepm` to your Cargo.toml
+```system
+cargo add threepm
+```
+
+If you are running on a target where access to flash is slow (eg RP2040), you can try enabling the `code-in-ram` feature for more performance.
+```system
+cargo add threepm --features threepm/code-in-ram
+```
+
+This uses linker tricks to put some performance critical code in RAM - note this does not work on all targets, and GCC will issue a few warnings during linking about symbols it doesn't think should live in RAM.
+
 ### Build
 
 This crate will compile ThreePM as part of the build process - this means you need to tell Rust about your C compiler!
