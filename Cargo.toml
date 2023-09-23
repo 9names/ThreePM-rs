@@ -1,6 +1,6 @@
 [package]
 name = "threepm"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 categories = ["embedded", "no-std::no-alloc", "multimedia::audio"]
 license = "MIT AND RPSL-1.0"
