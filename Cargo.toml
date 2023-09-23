@@ -22,11 +22,19 @@ byte-slice-cast = { version = "1.2.2" }
 
 [[example]]
 name = "mp3_to_raw"
+doc-scrape-examples = true
 
 [[example]]
 name = "mp3_to_wave"
 required-features = ["hound"]
 
 [[example]]
+name = "easymode_raw"
+doc-scrape-examples = true
+
+[[example]]
 name = "easymode_wave"
 required-features = ["hound"]
+
+[package.metadata.docs.rs]
+cargo-args = ["-Zunstable-options", "-Zrustdoc-scrape-examples"]
