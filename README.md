@@ -45,3 +45,7 @@ You can grab this sample by running the following command from the root of this 
 ```system
 wget https://dl.espressif.com/dl/audio/gs-16b-2c-44100hz.mp3
 ```
+
+### License
+ThreePM is [RPSL-1.0](ffi/ThreePM/src/RPSL.txt) licensed
+ThreePM-rs is [MIT](MIT) licensed  
