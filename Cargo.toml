@@ -3,7 +3,7 @@ name = "threepm"
 version = "0.1.0"
 edition = "2021"
 categories = ["embedded", "no-std::no-alloc", "multimedia::audio"]
-license = "MIT and RPSL-1.0"
+license = "MIT AND RPSL-1.0"
 description = "Rust bindings and high-level interface abstraction for ThreePM - a fixed-point MP3 decoding library written in C"
 
 [features]
