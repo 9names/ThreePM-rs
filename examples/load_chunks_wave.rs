@@ -12,7 +12,7 @@
 static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
 use core::slice::Chunks;
 use hound;
-use picomp3lib_rs::mp3::{DecodeErr, Mp3};
+use threepm::mp3::{DecodeErr, Mp3};
 use std::{fmt, path::Path};
 
 const BUFF_SZ: usize = 1024;

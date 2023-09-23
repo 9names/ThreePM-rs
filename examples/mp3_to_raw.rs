@@ -11,7 +11,7 @@
 
 static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
 use byte_slice_cast::AsByteSlice;
-use picomp3lib_rs::mp3::Mp3;
+use threepm::mp3::Mp3;
 use std::{fs::File, io::Write};
 
 fn main() {

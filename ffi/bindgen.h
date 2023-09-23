@@ -1,4 +1,4 @@
 /* include file for rust-bindgen */
-#include "picomp3lib/src/mp3dec.h"
-#include "picomp3lib/src/mp3common.h"
-#include "picomp3lib/src/coder.h"
+#include "ThreePM/src/mp3dec.h"
+#include "ThreePM/src/mp3common.h"
+#include "ThreePM/src/coder.h"

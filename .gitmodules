@@ -1,3 +1,3 @@
-[submodule "ffi/picomp3lib"]
-	path = ffi/picomp3lib
-	url = https://github.com/9names/picomp3lib
+[submodule "ffi/ThreePM"]
+	path = ffi/ThreePM
+	url = https://github.com/9names/ThreePM

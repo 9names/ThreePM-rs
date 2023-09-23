@@ -11,7 +11,7 @@
 
 static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
 use byte_slice_cast::AsByteSlice;
-use picomp3lib_rs::{ffi::*, mp3::Mp3};
+use threepm::{ffi::*, mp3::Mp3};
 use std::{fs::File, io::Write};
 
 fn main() {
@@ -29,7 +29,7 @@ fn main() {
     let mut bytes_left = MP3.len() as i32;
     let mut mp3dec_struct = Mp3::new();
     let mp3dec = unsafe { mp3dec_struct.ptr() };
-    let start = unsafe { picomp3lib_rs::ffi::MP3FindSyncWord(mp3ptr, bytes_left) };
+    let start = unsafe { threepm::ffi::MP3FindSyncWord(mp3ptr, bytes_left) };
     bytes_left -= start;
     println!("start of mp3 audio data: {}", start);
     // Update our MP3 pointer to skip past the id3 tags

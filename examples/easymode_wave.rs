@@ -18,7 +18,7 @@ const CHUNK_SZ: usize = 512;
 /// The length of our audio output buffer
 /// This is correct for MPEG-1 Layer 3, MPEG-2 Layer 3 is smaller so should be fine
 const BUFF_LEN: usize = 2304;
-use picomp3lib_rs::easy_mode::{self, EasyModeErr};
+use threepm::easy_mode::{self, EasyModeErr};
 
 fn main() {
     println!("easymode decode start!");
