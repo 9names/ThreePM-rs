@@ -7,7 +7,7 @@
 //! // In the real code you could include an MP3 in your program using the following line
 //! // static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
 //! // This will stand in for our real MP3 for now to make the docs more portable.
-//! static MP3: &[u8] = [0u8;512];
+//! static MP3: &[u8] = &[0u8;512];
 //! // Size of our fake "sector" to simulate loading data off of a disk
 //! const CHUNK_SZ: usize = 512;
 //!
