@@ -9,10 +9,11 @@
 //! and compare to
 //! ```mplayer gs-16b-2c-44100hz.mp3```
 
-// We're using a fake file here to make docs happy without bundling an MP3
-// In the real code you could include an MP3 in your program using the following line
-// static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
-static MP3: &[u8] = &[0u8;512];
+// We're using a fake file here to make docs happy without bundling an MP3 in this project
+#[cfg(doc)]
+static MP3: &[u8] = &[0u8; 512];
+#[cfg(not(doc))]
+static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
 use std::{fs::File, io::Write};
 
 /// Size of our fake "sector" to simulate loading data off of a disk

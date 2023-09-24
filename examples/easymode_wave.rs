@@ -9,6 +9,10 @@
 //! and compare to
 //! ```mplayer gs-16b-2c-44100hz.mp3```
 
+// We're using a fake file here to make docs happy without bundling an MP3 in this project
+#[cfg(doc)]
+static MP3: &[u8] = &[0u8; 512];
+#[cfg(not(doc))]
 static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
 use std::path::Path;
 
