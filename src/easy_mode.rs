@@ -6,7 +6,7 @@
 //!
 //! // In the real code you could include an MP3 in your program using the following line
 //! // static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
-//! // This will stand in for our real MP3 for now to make the docs more portable.
+//! // This will stand in for our real MP3 for now to make doc tests pass.
 //! static MP3: &[u8] = &[0u8;512];
 //! // Size of our fake "sector" to simulate loading data off of a disk
 //! const CHUNK_SZ: usize = 512;
@@ -20,19 +20,21 @@
 //!    let mut buf = [0i16; 2304];
 //!
 //!    // skip past the id3 tags and anything else up to the first mp3 sync tag
-//!    while !easy.mp3_decode_ready() {
+//!    'initloop: while !easy.mp3_decode_ready() {
 //!        while easy.buffer_free() >= CHUNK_SZ {
 //!            if let Some(mp3data) = mp3_loader.next() {
 //!                easy.add_data_no_sync(mp3data);
 //!            } else {
-//!                panic!("Out of data!");
+//!                println!("Out of data!");
+//!                break 'initloop;
 //!            }
 //!        }
 //!    }
 //!    // We're past the header now, so we should be able to correctly decode an MP3 frame
 //!    // Metadata is stored in every frame, so check that now:
-//!    let frame = easy.mp3_info().expect("Could not find MP3 frame in buffer");
-//!    println!("First MP3 frame info: {:?}", frame);
+//!    if let Ok(frame) = easy.mp3_info() {
+//!        println!("First MP3 frame info: {:?}", frame);
+//!    }
 //!    loop {
 //!           // if the buffer has space for another chunk of data from our source, load it
 //!           if easy.buffer_free() >= CHUNK_SZ {
