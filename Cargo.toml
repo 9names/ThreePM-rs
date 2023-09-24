@@ -29,12 +29,8 @@ name = "mp3_to_wave"
 doc-scrape-examples = false
 
 [[example]]
-name = "easymode_raw"
-doc-scrape-examples = true
-
-[[example]]
 name = "easymode_wave"
-doc-scrape-examples = false
+doc-scrape-examples = true
 
 [package.metadata.docs.rs]
 cargo-args = ["-Zunstable-options", "-Zrustdoc-scrape-examples"]
