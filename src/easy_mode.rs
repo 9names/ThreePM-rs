@@ -12,48 +12,46 @@
 //! const CHUNK_SZ: usize = 512;
 //!
 //! fn main() {
-//!    // Set up our EasyMode decoder
-//!    let mut easy = EasyMode::new();
-//!    // Set up the source of our MP3 data
-//!    let mp3_loader = &mut MP3.chunks(CHUNK_SZ);
-//!    // Set up the buffer for the decoded audio data to be stored in
-//!    let mut buf = [0i16; 2304];
+//!     // Set up our EasyMode decoder
+//!     let mut easy = EasyMode::new();
+//!     // Set up the source of our MP3 data
+//!     let mp3_loader = &mut MP3.chunks(CHUNK_SZ);
+//!     // Set up the buffer for the decoded audio data to be stored in
+//!     let mut buf = [0i16; 2304];
 //!
-//!    // skip past the id3 tags and anything else up to the first mp3 sync tag
-//!    'initloop: while !easy.mp3_decode_ready() {
-//!        while easy.buffer_free() >= CHUNK_SZ {
-//!            if let Some(mp3data) = mp3_loader.next() {
-//!                easy.add_data_no_sync(mp3data);
-//!            } else {
-//!                println!("Out of data!");
-//!                break 'initloop;
-//!            }
-//!        }
-//!    }
-//!    // We're past the header now, so we should be able to correctly decode an MP3 frame
-//!    // Metadata is stored in every frame, so check that now:
-//!    if let Ok(frame) = easy.mp3_info() {
-//!        println!("First MP3 frame info: {:?}", frame);
-//!    }
-//!    loop {
-//!           // if the buffer has space for another chunk of data from our source, load it
-//!           if easy.buffer_free() >= CHUNK_SZ {
-//!               if let Some(mp3data) = mp3_loader.next() {
-//!                   easy.add_data(mp3data);
-//!               }
-//!           }
-//!           // decode the next chunk of mp3
-//!           match easy.decode(&mut buf) {
-//!               Ok(_decoded_samples) => {
-//!                   // Do something with decoded_samples (like play or store them)
-//!               }
-//!               Err(_e) => {
-//!                   // Handle error by aborting, skipping a frame, adding more data, etc.
-//!                   // This example will just exit because this is simpler
-//!                   break;
-//!               }
-//!           }
-//!       }
+//!     // skip past the id3 tags and anything else up to the first mp3 sync tag
+//!     while !easy.mp3_decode_ready() && easy.buffer_free() >= CHUNK_SZ {
+//!         if let Some(mp3data) = mp3_loader.next() {
+//!             easy.add_data_no_sync(mp3data);
+//!         } else {
+//!             println!("Out of data!");
+//!             break 'initloop;
+//!         }
+//!     }
+//!     // We're past the header now, so we should be able to correctly decode an MP3 frame
+//!     // Metadata is stored in every frame, so check that now:
+//!     if let Ok(frame) = easy.mp3_info() {
+//!         println!("First MP3 frame info: {:?}", frame);
+//!     }
+//!     loop {
+//!         // if the buffer has space for another chunk of data from our source, load it
+//!         if easy.buffer_free() >= CHUNK_SZ {
+//!             if let Some(mp3data) = mp3_loader.next() {
+//!                 easy.add_data(mp3data);
+//!             }
+//!         }
+//!         // decode the next chunk of mp3
+//!         match easy.decode(&mut buf) {
+//!             Ok(_decoded_samples) => {
+//!                 // Do something with decoded_samples (like play or store them)
+//!             }
+//!             Err(_e) => {
+//!                 // Handle error by aborting, skipping a frame, adding more data, etc.
+//!                 // This example will just exit because this is simpler
+//!                 break;
+//!             }
+//!         }
+//!     }
 //! }
 //!
 //! ```
