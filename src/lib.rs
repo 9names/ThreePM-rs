@@ -25,12 +25,17 @@
 //!     // skip past the id3 tags and anything else up to the first mp3 sync tag
 //!     while !easy.mp3_decode_ready() && easy.buffer_free() >= CHUNK_SZ {
 //!         if let Some(mp3data) = mp3_loader.next() {
-//!             easy.add_data_no_sync(mp3data);
+//!             easy.add_data(mp3data);
 //!         } else {
 //!             println!("Out of data!");
 //!             break;
 //!         }
 //!     }
+//!
+//!     // Move our decode window up to the next sync word in the stream
+//!     let syncd = easy.skip_to_next_sync_word();
+//!     println!("Synced: {syncd}");
+//!
 //!     // We're past the header now, so we should be able to correctly decode an MP3 frame
 //!     // Metadata is stored in every frame, so check that now:
 //!     if let Ok(frame) = easy.mp3_info() {

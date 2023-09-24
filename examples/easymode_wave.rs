@@ -33,12 +33,16 @@ fn main() {
     while !easy.mp3_decode_ready() {
         while easy.buffer_free() >= CHUNK_SZ {
             if let Some(mp3data) = mp3_loader.next() {
-                easy.add_data_no_sync(mp3data);
+                easy.add_data(mp3data);
             } else {
                 panic!("Out of data!");
             }
         }
     }
+
+    // Move our decode window up to the next sync word in the stream
+    let syncd = easy.find_next_sync_word();
+    println!("Synced: {syncd}");
 
     let frame = easy.mp3_info().expect("Could not find MP3 frame in buffer");
     println!("First MP3 frame info: {:?}", frame);
@@ -80,6 +84,7 @@ fn main() {
                     if let Some(mp3data) = mp3_loader.next() {
                         // no need to check how much was added, we know that it's large enough to fit
                         easy.add_data(mp3data);
+                        let _ = easy.skip_to_next_sync_word();
                     } else {
                         println!("there is no more data to add, breaking out of decode loop");
                         break;

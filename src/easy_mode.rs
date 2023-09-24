@@ -30,14 +30,12 @@ impl EasyMode {
     }
 
     /// Add MP3 data to the EasyMode internal MP3 stream buffer.
-    /// This function will also attempt to find the start of stream
     pub fn add_data(&mut self, data: &[u8]) -> usize {
-        let bytes_added = self.buffer.load_slice(data);
-        let _ = self.find_next_sync_word();
-        bytes_added
+        self.buffer.load_slice(data)
     }
 
-    /// Every mp3 frame starts with a sync word. Find the next one, and check if it's a valid frame
+    /// Every mp3 frame starts with a sync word. Skip any data in buffer until the next sync word, and check if it's a valid frame.
+    /// Returns true if it found a sync word, otherwise false
     pub fn find_next_sync_word(&mut self) -> bool {
         if !self.sync {
             let start = Mp3::find_sync_word(self.buffer.borrow_slice());
@@ -57,11 +55,6 @@ impl EasyMode {
             }
         }
         self.sync
-    }
-
-    /// Add MP3 data to the EasyMode internal MP3 stream buffer
-    pub fn add_data_no_sync(&mut self, data: &[u8]) -> usize {
-        self.buffer.load_slice(data)
     }
 
     /// How much data is free in the EasyMode internal MP3 stream buffer
