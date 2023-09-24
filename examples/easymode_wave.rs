@@ -41,7 +41,7 @@ fn main() {
     }
 
     // Move our decode window up to the next sync word in the stream
-    let syncd = easy.find_next_sync_word();
+    let syncd = easy.skip_to_next_sync_word();
     println!("Synced: {syncd}");
 
     let frame = easy.mp3_info().expect("Could not find MP3 frame in buffer");

@@ -36,7 +36,7 @@ impl EasyMode {
 
     /// Every mp3 frame starts with a sync word. Skip any data in buffer until the next sync word, and check if it's a valid frame.
     /// Returns true if it found a sync word, otherwise false
-    pub fn find_next_sync_word(&mut self) -> bool {
+    pub fn skip_to_next_sync_word(&mut self) -> bool {
         if !self.sync {
             let start = Mp3::find_sync_word(self.buffer.borrow_slice());
             if start >= 0 {
@@ -95,7 +95,7 @@ impl EasyMode {
                 self.buffer_skip(bytes_to_skip);
                 self.bytes_to_skip -= bytes_to_skip;
             } else {
-                let _ = self.find_next_sync_word();
+                let _ = self.skip_to_next_sync_word();
             }
 
             self.parsed_id3 && self.bytes_to_skip == 0 && self.sync
