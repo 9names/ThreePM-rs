@@ -22,11 +22,11 @@ const CHUNK_SZ: usize = 512;
 /// The length of our audio output buffer
 /// This is correct for MPEG-1 Layer 3, MPEG-2 Layer 3 is smaller so should be fine
 const BUFF_LEN: usize = 2304;
-use threepm::easy_mode::{self, EasyModeErr};
+use threepm::easy_mode::{EasyMode, EasyModeErr};
 
 fn main() {
     println!("easymode decode start!");
-    let mut easy = easy_mode::EasyMode::new();
+    let mut easy = EasyMode::new();
     let mp3_loader = &mut MP3.chunks(CHUNK_SZ);
 
     // skip past the id3 tags and anything else up to the first mp3 sync tag

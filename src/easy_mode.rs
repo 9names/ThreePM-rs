@@ -2,7 +2,7 @@
 //! # Usage:
 //!
 //! ```rust
-//! use threepm::easy_mode::{self, EasyModeErr};
+//! use threepm::easy_mode::{EasyMode, EasyModeErr};
 //!
 //! // In the real code you could include an MP3 in your program using the following line
 //! // static MP3: &[u8] = include_bytes!("../gs-16b-2c-44100hz.mp3");
@@ -13,7 +13,7 @@
 //!
 //! fn main() {
 //!    // Set up our EasyMode decoder
-//!    let mut easy = easy_mode::EasyMode::new();
+//!    let mut easy = EasyMode::new();
 //!    // Set up the source of our MP3 data
 //!    let mp3_loader = &mut MP3.chunks(CHUNK_SZ);
 //!    // Set up the buffer for the decoded audio data to be stored in
