@@ -1,6 +1,6 @@
 use core::{fmt, slice::Chunks};
 
-const BUFF_SZ: usize = 1024;
+const BUFF_SZ: usize = 2048;
 const CHUNK_SZ: usize = 512;
 #[derive(Debug)]
 pub(crate) struct Buffer {
