@@ -79,7 +79,7 @@ impl Default for MP3FrameInfo {
 pub enum DecodeErr {
     Okay,
     InDataUnderflow,
-    MaindataUnderfow,
+    MaindataUnderflow,
     FreeBitrateSync,
     OutOfMemory,
     NullPointer,
@@ -100,7 +100,7 @@ impl From<i32> for DecodeErr {
         match value {
             0 => Okay,
             -1 => InDataUnderflow,
-            -2 => MaindataUnderfow,
+            -2 => MaindataUnderflow,
             -3 => FreeBitrateSync,
             -4 => OutOfMemory,
             -5 => NullPointer,

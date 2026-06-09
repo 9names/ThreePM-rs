@@ -15,6 +15,12 @@ pub struct EasyMode {
     frame_info: Option<MP3FrameInfo>,
 }
 
+impl Default for EasyMode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl EasyMode {
     /// Construct a new "easy mode" MP3 decoder
     pub const fn new() -> Self {
@@ -172,7 +178,7 @@ impl EasyMode {
 pub enum EasyModeErr {
     Okay,
     InDataUnderflow,
-    MaindataUnderfow,
+    MaindataUnderflow,
     FreeBitrateSync,
     OutOfMemory,
     NullPointer,
@@ -193,7 +199,7 @@ impl From<DecodeErr> for EasyModeErr {
         match value {
             DecodeErr::Okay => EasyModeErr::Okay,
             DecodeErr::InDataUnderflow => EasyModeErr::InDataUnderflow,
-            DecodeErr::MaindataUnderfow => EasyModeErr::MaindataUnderfow,
+            DecodeErr::MaindataUnderflow => EasyModeErr::MaindataUnderflow,
             DecodeErr::FreeBitrateSync => EasyModeErr::FreeBitrateSync,
             DecodeErr::OutOfMemory => EasyModeErr::OutOfMemory,
             DecodeErr::NullPointer => EasyModeErr::NullPointer,

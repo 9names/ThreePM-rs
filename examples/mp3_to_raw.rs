@@ -1,7 +1,7 @@
 //! Demo to convert from mp3 to raw audio to validate decoding
 //!
 //! To verify: run
-//! ```cargo run --bin mp3toraw --features="byte-slice-cast"```
+//! ```cargo run --example mp3_to_raw --release```
 //! then
 //! ```sox -t raw -r 44100 -b 16 -c 2 -L -e signed-integer audio_raw.bin audio_raw.wav```
 //! finally
