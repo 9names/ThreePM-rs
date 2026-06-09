@@ -11,6 +11,8 @@ pub struct EasyMode {
     sync: bool,
     have_decoded: bool,
     parsed_id3: bool,
+    /// True when the stream began with an ID3v2 tag skipped by header size.
+    id3_skipped: bool,
     bytes_to_skip: usize,
     frame_info: Option<MP3FrameInfo>,
 }
@@ -30,9 +32,29 @@ impl EasyMode {
             sync: false,
             have_decoded: false,
             parsed_id3: false,
+            id3_skipped: false,
             bytes_to_skip: 0,
             frame_info: None,
         }
+    }
+
+    /// After ID3 skip or at the start of raw MP3 data, align to the next frame.
+    fn sync_to_frame(&mut self) -> bool {
+        if self.sync {
+            return true;
+        }
+        if self.id3_skipped {
+            match self.mp3.get_next_frame_info(self.buffer.borrow_slice()) {
+                Ok(frame) => {
+                    self.frame_info = Some(frame);
+                    self.sync = true;
+                }
+                Err(_) => return false,
+            }
+        } else {
+            self.skip_to_next_sync_word();
+        }
+        self.sync
     }
 
     /// Add MP3 data to the EasyMode internal MP3 stream buffer.
@@ -52,7 +74,6 @@ impl EasyMode {
                 let f = self.mp3.get_next_frame_info(self.buffer.borrow_slice());
                 if let Ok(frame) = f {
                     self.frame_info = Some(frame);
-                    self.have_decoded = true;
                 }
             } else {
                 // Could not sync with any of the data in the buffer, so most of the data is useless.
@@ -80,32 +101,31 @@ impl EasyMode {
         to_remove
     }
 
-    /// Skip over ID3 and anything else at the start of an MP3 stream.
-    /// Returns true when we've got a valid MP3 frame
+    /// Skip over ID3 and align to the first MP3 frame.
+    ///
+    /// Returns true when a valid frame header is available. After an ID3v2 tag,
+    /// alignment uses the tag size from the header because tag bodies 
+    /// can contain false MPEG sync bytes.
     pub fn mp3_decode_ready(&mut self) -> bool {
         if self.buffer_used() == 0 {
-            false
-        } else {
-            if !self.parsed_id3 {
-                self.parsed_id3 = true;
-                let id3 = Mp3::find_id3v2(self.buffer.borrow_slice());
-                self.bytes_to_skip = if let Some(id3) = id3 {
-                    // start of header + size of header + length of id3v2 info
-                    id3.0 + 10 + id3.1.size
-                } else {
-                    0
-                };
-            };
-            if self.bytes_to_skip > 0 {
-                let bytes_to_skip = core::cmp::min(self.buffer_used(), self.bytes_to_skip);
-                self.buffer_skip(bytes_to_skip);
-                self.bytes_to_skip -= bytes_to_skip;
-            } else {
-                let _ = self.skip_to_next_sync_word();
-            }
-
-            self.parsed_id3 && self.bytes_to_skip == 0 && self.sync
+            return false;
         }
+        if !self.parsed_id3 {
+            self.parsed_id3 = true;
+            if let Some((offset, id3)) = Mp3::find_id3v2(self.buffer.borrow_slice()) {
+                self.id3_skipped = true;
+                self.bytes_to_skip = id3.skip_len(offset);
+            }
+        }
+        if self.bytes_to_skip > 0 {
+            let bytes_to_skip = core::cmp::min(self.buffer_used(), self.bytes_to_skip);
+            self.buffer_skip(bytes_to_skip);
+            self.bytes_to_skip -= bytes_to_skip;
+            if self.bytes_to_skip > 0 {
+                return false;
+            }
+        }
+        self.sync_to_frame()
     }
 
     /// Decode the next MP3 audio frame after checking that the output buffer is large enough

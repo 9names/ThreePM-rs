@@ -39,7 +39,7 @@ pub enum Id3v2Version {
     ID3v2_3,
     /// ID3v2.4
     ID3v2_4,
-    /// Major version isn't 2 and minor version isn't 0-4, unknown or invalid version
+    /// Unrecognized major/minor version bytes
     Invalid,
 }
 
@@ -52,6 +52,19 @@ pub struct Id3v2 {
     pub flags: Id3v2Flags,
     /// Length of the Id3v2 payload (excludes header length)
     pub size: usize,
+}
+
+impl Id3v2 {
+    /// Bytes to skip from the start of a buffer to reach audio after this tag.
+    ///
+    /// `header_offset` is the index of the `ID3` magic in the buffer.
+    pub fn skip_len(&self, header_offset: usize) -> usize {
+        let mut skip = header_offset + 10 + self.size;
+        if self.flags.footer_present {
+            skip += 10;
+        }
+        skip
+    }
 }
 
 impl MP3FrameInfo {
@@ -288,9 +301,10 @@ impl Mp3 {
         for (offset, slice) in window.enumerate() {
             if let [b'I', b'D', b'3', major, minor, flags, s1, s2, s3, s4] = slice {
                 let version = match (major, minor) {
-                    (2, 2) => Id3v2Version::ID3v2_2,
-                    (2, 3) => Id3v2Version::ID3v2_3,
-                    (2, 4) => Id3v2Version::ID3v2_4,
+                    (2, 0) => Id3v2Version::ID3v2_2,
+                    (2, 1) => Id3v2Version::ID3v2_1,
+                    (3, 0) => Id3v2Version::ID3v2_3,
+                    (4, 0) => Id3v2Version::ID3v2_4,
                     (_, _) => Id3v2Version::Invalid,
                 };
                 let id3v2_flags = Id3v2Flags {
@@ -299,12 +313,11 @@ impl Mp3 {
                     experimental: flags & 0b0010_0000 == 0b0010_0000,
                     footer_present: flags & 0b0001_0000 == 0b0001_0000,
                 };
-                // Only the top 4 bits are valid flags, the bottom 4 were never used
-                let valid_flags = flags & 0b0000_1111 != 0b0000_1111;
-                // The ID3v2 tag size is stored as a 32 bit synchsafe integer, making a total of 28 effective bits (representing up to 256MB).
-                // a syncsafe integer is a 7bit integer where the top bit is always zero.
-                let valid_syncsafe = (s1 | s2 | s3 | s4) & 0b1000_0000 != 0b1000_0000;
-                if version == Id3v2Version::Invalid && valid_syncsafe && valid_flags {
+                // Only the top 4 bits are valid flags; the bottom 4 are reserved and must be zero.
+                let valid_flags = flags & 0b0000_1111 == 0;
+                // Tag size is a 28-bit synchsafe integer: each byte uses only the low 7 bits.
+                let valid_syncsafe = (s1 | s2 | s3 | s4) & 0b1000_0000 == 0;
+                if version != Id3v2Version::Invalid && valid_syncsafe && valid_flags {
                     let (s1, s2, s3, s4) = (*s1 as usize, *s2 as usize, *s3 as usize, *s4 as usize);
                     let size = s4 | s3 << 7 | s2 << 14 | s1 << 21;
                     return Some((
