@@ -172,7 +172,7 @@ impl EasyMode {
 pub enum EasyModeErr {
     Okay,
     InDataUnderflow,
-    MaindataUnderfow,
+    MaindataUnderflow,
     FreeBitrateSync,
     OutOfMemory,
     NullPointer,
@@ -193,7 +193,7 @@ impl From<DecodeErr> for EasyModeErr {
         match value {
             DecodeErr::Okay => EasyModeErr::Okay,
             DecodeErr::InDataUnderflow => EasyModeErr::InDataUnderflow,
-            DecodeErr::MaindataUnderfow => EasyModeErr::MaindataUnderfow,
+            DecodeErr::MaindataUnderflow => EasyModeErr::MaindataUnderflow,
             DecodeErr::FreeBitrateSync => EasyModeErr::FreeBitrateSync,
             DecodeErr::OutOfMemory => EasyModeErr::OutOfMemory,
             DecodeErr::NullPointer => EasyModeErr::NullPointer,
