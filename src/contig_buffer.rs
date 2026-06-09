@@ -172,14 +172,13 @@ mod tests {
         let mut buffer = Buffer::new();
         // let data = &[0,1,2,3,4,5,6,7];
         let data = &[42; BUFF_SZ * 2];
-        let iter = data.chunks(CHUNK_SZ);
-        assert_eq!(iter.count(), 4);
+        assert_eq!(data.chunks(CHUNK_SZ).count(), 8);
         let mut iter = data.chunks(CHUNK_SZ);
         buffer.load_more(&mut iter);
         assert_eq!(buffer.used(), BUFF_SZ);
         assert_eq!(buffer.available(), 0);
         assert_eq!(buffer.tail_free(), 0);
-        assert_eq!(iter.count(), 2);
+        assert_eq!(iter.count(), 4);
     }
 
     #[test]
