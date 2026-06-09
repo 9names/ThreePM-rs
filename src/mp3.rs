@@ -54,6 +54,19 @@ pub struct Id3v2 {
     pub size: usize,
 }
 
+impl Id3v2 {
+    /// Bytes to skip from the start of a buffer to reach audio after this tag.
+    ///
+    /// `header_offset` is the index of the `ID3` magic in the buffer.
+    pub fn skip_len(&self, header_offset: usize) -> usize {
+        let mut skip = header_offset + 10 + self.size;
+        if self.flags.footer_present {
+            skip += 10;
+        }
+        skip
+    }
+}
+
 impl MP3FrameInfo {
     pub fn new() -> MP3FrameInfo {
         MP3FrameInfo {
