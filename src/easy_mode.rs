@@ -15,6 +15,12 @@ pub struct EasyMode {
     frame_info: Option<MP3FrameInfo>,
 }
 
+impl Default for EasyMode {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl EasyMode {
     /// Construct a new "easy mode" MP3 decoder
     pub const fn new() -> Self {
