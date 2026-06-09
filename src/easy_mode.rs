@@ -9,7 +9,6 @@ pub struct EasyMode {
     mp3: Mp3,
     buffer: contig_buffer::Buffer,
     sync: bool,
-    have_decoded: bool,
     parsed_id3: bool,
     /// True when the stream began with an ID3v2 tag skipped by header size.
     id3_skipped: bool,
@@ -30,7 +29,6 @@ impl EasyMode {
             mp3: Mp3::new(),
             buffer: contig_buffer::Buffer::new(),
             sync: false,
-            have_decoded: false,
             parsed_id3: false,
             id3_skipped: false,
             bytes_to_skip: 0,
@@ -143,7 +141,6 @@ impl EasyMode {
                 .decode(self.buffer.borrow_slice(), buffered_data_len, output_audio)
             {
                 Ok(newlen) => {
-                    self.have_decoded = true;
                     let consumed = oldlen - newlen as usize;
                     self.buffer.increment_start(consumed);
                     self.frame_info = Some(next_frame);
@@ -175,7 +172,6 @@ impl EasyMode {
                 let output_samps = unsafe { self.frame_info.unwrap_unchecked().outputSamps };
                 let consumed = oldlen as usize - newlen as usize;
                 self.buffer.increment_start(consumed);
-                self.have_decoded = true;
                 Ok(output_samps as usize)
             }
             Err(e) => Err(e.into()),
