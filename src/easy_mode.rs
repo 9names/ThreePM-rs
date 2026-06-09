@@ -104,7 +104,7 @@ impl EasyMode {
     /// Skip over ID3 and align to the first MP3 frame.
     ///
     /// Returns true when a valid frame header is available. After an ID3v2 tag,
-    /// alignment uses the tag size from the header because tag bodies 
+    /// alignment uses the tag size from the header because tag bodies
     /// can contain false MPEG sync bytes.
     pub fn mp3_decode_ready(&mut self) -> bool {
         if self.buffer_used() == 0 {
