@@ -7,8 +7,16 @@ license = "MIT AND RPSL-1.0"
 description = "Rust bindings and high-level interface abstraction for ThreePM - a fixed-point MP3 decoding library written in C"
 
 [features]
-# add some performance-critical functions to .data memory section
+# Add some performance-critical functions to .data memory section
 code-in-ram = []
+# Have the C library store decoder state internally in static buffers.
+# The decoder state is around 24KB in size.
+# If we leave it to the C library then you never have to worry about accidentally
+# storing an extra 24KB on the stack.
+# On the flipside - you can never free it, and you can only ever decode 1 MP3 at a time.
+#
+# I think you should probably just leave this off.
+use-static-buffers = []
 
 [build-dependencies]
 cc = "1.0"
